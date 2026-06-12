@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Flower, KeyRound } from "lucide-react";
+import logo from "@/assets/flores-logo.png.asset.json";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
