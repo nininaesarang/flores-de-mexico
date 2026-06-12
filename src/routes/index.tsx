@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Play, Settings, Info, Sun, Volume2, Bell } from "lucide-react";
+import { Play, Settings, Info, Sun, Volume2, Bell, LogIn } from "lucide-react";
 import bg from "@/assets/title-bg.png.asset.json";
 import logo from "@/assets/flores-logo.png.asset.json";
 import {
