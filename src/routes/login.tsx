@@ -64,7 +64,7 @@ function LoginPage() {
             Recordarme
           </label>
           <a href="#" className="font-semibold text-teal-600 hover:underline">
-            ¿Olvidaste algo?
+            ¿Olvidaste tu contraseña?
           </a>
         </div>
 
