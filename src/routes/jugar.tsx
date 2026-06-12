@@ -239,7 +239,7 @@ function JugarPage() {
         <div
           className={`absolute transition-all duration-300 ease-in-out ${
             isActive
-              ? "left-4 top-1/2 -translate-y-1/2 -translate-x-0 text-white"
+              ? "left-[28%] top-1/2 -translate-x-1/2 -translate-y-1/2 text-white"
               : "left-1/2 top-1.5 -translate-x-1/2 -translate-y-0 text-gray-400"
           }`}
         >
@@ -248,10 +248,10 @@ function JugarPage() {
 
         {/* Morphing Label */}
         <span
-          className={`absolute text-[10px] transition-all duration-300 ease-in-out whitespace-nowrap ${
+          className={`absolute transition-all duration-300 ease-in-out whitespace-nowrap ${
             isActive
-              ? "left-11 top-1/2 -translate-y-1/2 -translate-x-0 font-black text-white opacity-100"
-              : "left-1/2 bottom-1 -translate-x-1/2 -translate-y-0 font-semibold text-gray-400 opacity-100"
+              ? "left-[64%] top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs md:text-sm font-black text-white opacity-100"
+              : "left-1/2 bottom-1 -translate-x-1/2 -translate-y-0 text-[10px] font-bold text-gray-400 opacity-100"
           }`}
         >
           {label}
@@ -639,10 +639,196 @@ function JugarPage() {
                   </div>
                 </div>
               </>
+            ) : selectedCategory === "estados" ? (
+              selectedStateAlbum === null ? (
+                /* 1. Closed Books Layout for States */
+                <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between pb-2 border-b border-pink-50">
+                    <button
+                      onClick={() => setSelectedCategory(null)}
+                      className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
+                    >
+                      <ChevronLeft className="h-4 w-4" /> Volver
+                    </button>
+                    <h3 className="text-base font-extrabold text-gray-800">Álbumes de Estados</h3>
+                    <span className="rounded-full bg-pink-100 px-3 py-0.5 text-xs font-extrabold text-pink-700">
+                      12 / 32
+                    </span>
+                  </div>
+
+                  {/* Horizontal scrolling grid in two rows */}
+                  <div className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 scrollbar-none snap-x w-full">
+                    {MEXICAN_STATES.map((state) => (
+                      <div key={state.id} className="flex flex-col items-center gap-2 snap-center w-24">
+                        <button
+                          onClick={() => {
+                            if (state.unlocked) {
+                              setSelectedStateAlbum(state.id);
+                            } else {
+                              toast.info("Estado Bloqueado", {
+                                description: `Sigue explorando para desbloquear el álbum de ${state.name}.`,
+                              });
+                            }
+                          }}
+                          className={`relative h-32 w-24 rounded-r-xl rounded-l-md border-y-2 border-r-4 border-l-8 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 ${
+                            state.unlocked
+                              ? `bg-gradient-to-br ${state.color} border-pink-300 border-l-[#3a001a]`
+                              : "bg-gray-200 border-gray-300 border-l-gray-400 opacity-60"
+                          }`}
+                        >
+                          {/* Spine binding effect */}
+                          <div className="absolute inset-y-0 left-0 w-0.5 bg-black/10" />
+                          {state.unlocked && (
+                            <div className="absolute inset-1.5 border border-amber-400/30 rounded pointer-events-none" />
+                          )}
+
+                          {/* Logo on cover */}
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+                            <span className="text-3xl filter drop-shadow">{state.logo}</span>
+                            {state.unlocked && (
+                              <span className="text-[8px] font-black tracking-widest text-amber-300 uppercase">
+                                ABRIR
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Lock Overlay */}
+                          {!state.unlocked && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-r-xl rounded-l-md">
+                              <Lock className="h-5 w-5 text-gray-500" />
+                            </div>
+                          )}
+                        </button>
+                        <span className="text-[11px] font-black text-gray-600 truncate max-w-full text-center">
+                          {state.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Tips card */}
+                  <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100 flex items-start gap-2.5">
+                    <span className="text-xl">💡</span>
+                    <p className="text-[11px] font-semibold text-amber-800 leading-normal">
+                      ¡Los libritos de cada estado guardan recuerdos locales! Explora el mapa de juego para abrirlos todos.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                /* 2. Coahuila State Mini Album View */
+                <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm space-y-4 animate-fade-in-slide-up">
+                  {/* Top Bar Header */}
+                  <div className="flex items-center justify-between pb-2 border-b border-pink-50">
+                    <button
+                      onClick={() => setSelectedStateAlbum(null)}
+                      className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
+                    >
+                      <ChevronLeft className="h-4 w-4" /> Volver a Estados
+                    </button>
+                    <h3 className="text-base font-extrabold text-[#70003c]">Coahuila</h3>
+                    <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
+                      <span className="text-[10px]">⭐</span> 1 / 6
+                    </div>
+                  </div>
+
+                  {/* Album Info Card */}
+                  <div className="relative overflow-hidden rounded-2xl border-2 border-pink-100 bg-[#fdfaf6] p-4 shadow-inner">
+                    <div className="flex h-1.5 w-full absolute top-0 inset-x-0">
+                      <div className="flex-1 bg-pink-500" />
+                      <div className="flex-1 bg-teal-400" />
+                      <div className="flex-1 bg-yellow-400" />
+                      <div className="flex-1 bg-emerald-400" />
+                    </div>
+                    <h4 className="text-lg font-bold text-teal-800 mt-1">San Pedro de las Colonias</h4>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Colecciona los stickers históricos y culturales de los municipios de Coahuila.
+                    </p>
+                    {/* Progress Bar */}
+                    <div className="mt-3 space-y-1">
+                      <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+                        <div className="h-full w-[16.6%] bg-pink-600 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sticker Album Grid */}
+                  <div className="grid grid-cols-2 gap-3.5 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                    {/* Card 01: Museo Madero Unlocked */}
+                    <button
+                      onClick={() => {
+                        setSelectedSticker({
+                          id: "coahuila_01",
+                          name: "Museo Madero",
+                          scientific: "San Pedro, Coahuila",
+                          description: "Cuna de la Revolución Mexicana. El histórico edificio donde Francisco I. Madero escribió gran parte de su libro 'La Sucesión Presidencial'.",
+                          unlocked: true,
+                          image: "🏛️",
+                          rarity: "Histórico"
+                        });
+                      }}
+                      className="flex flex-col items-center bg-white border border-pink-200 rounded-2xl p-2 relative shadow-sm hover:scale-[1.03] transition-all"
+                    >
+                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-black text-white bg-[#d80073]">
+                        01
+                      </div>
+                      <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
+                        <img src="/museo-madero.png" className="w-full h-full object-contain hover:scale-105 transition-transform" />
+                      </div>
+                      <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                        Museo Madero (San Pedro)
+                      </span>
+                    </button>
+
+                    {/* Cards 02 to 05: Locked with "?" inside */}
+                    {[2, 3, 4, 5].map((num) => (
+                      <div
+                        key={num}
+                        className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70"
+                      >
+                        <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
+                          0{num}
+                        </div>
+                        <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
+                          <span className="text-xl font-bold text-gray-300">?</span>
+                        </div>
+                        <span className="text-[10px] font-bold text-gray-400 mt-2">???</span>
+                      </div>
+                    ))}
+
+                    {/* Card 06: Locked with Padlock */}
+                    <div className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70">
+                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
+                        06
+                      </div>
+                      <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
+                        <Lock className="h-5 w-5 text-gray-400" />
+                      </div>
+                      <span className="text-[10px] font-bold text-gray-400 mt-2">???</span>
+                    </div>
+                  </div>
+
+                  {/* Navigation Buttons */}
+                  <button
+                    onClick={() => toast.info("No hay más páginas", { description: "¡Descubre más municipios en Coahuila para abrir nuevos tomos!" })}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-full bg-teal-700 py-2.5 text-xs font-black text-white transition hover:bg-teal-800"
+                  >
+                    Siguiente página →
+                  </button>
+
+                  {/* Yellow tip card */}
+                  <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100 flex items-start gap-2.5">
+                    <span className="text-xl">💡</span>
+                    <p className="text-[11px] font-semibold text-amber-800 leading-normal">
+                      ¡Sigue explorando los municipios de Coahuila para encontrar más stickers!
+                    </p>
+                  </div>
+                </div>
+              )
             ) : (
-              /* Drilling down into sub-category items list */
-              <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between mb-4 pb-2 border-b border-pink-50">
+              /* 3. Fauna/Flores/Comidas Sticker Albums */
+              <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm space-y-4 animate-fade-in-slide-up">
+                {/* Top Header */}
+                <div className="flex items-center justify-between pb-2 border-b border-pink-50">
                   <button
                     onClick={() => setSelectedCategory(null)}
                     className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
@@ -650,50 +836,123 @@ function JugarPage() {
                     <ChevronLeft className="h-4 w-4" /> Volver
                   </button>
                   <h3 className="text-base font-extrabold text-gray-800">
-                    {CATEGORIES_DATA.find(c => c.id === selectedCategory)?.title}
+                    {selectedCategory === "fauna" ? "Fauna" : selectedCategory === "flores" ? "Flores" : "Comidas"}
                   </h3>
-                  <span className="text-xs font-black text-teal-600 uppercase">
-                    {CATEGORIES_DATA.find(c => c.id === selectedCategory)?.badge}
-                  </span>
+                  <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
+                    <span className="text-[10px]">⭐</span> 1 / 6
+                  </div>
                 </div>
 
-                {/* Subcategory Grid */}
-                <div className="grid grid-cols-2 gap-3">
-                  {CATEGORIES_DATA.find(c => c.id === selectedCategory)?.items.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        if (item.unlocked) {
-                          setSelectedSticker({
-                            id: item.id,
-                            name: item.name,
-                            scientific: item.scientific,
-                            description: item.description,
-                            unlocked: item.unlocked,
-                            image: item.image,
-                            rarity: "Coleccionable"
-                          });
-                        } else {
-                          toast.info("Bloqueado", {
-                            description: `¡Completa más misiones turísticas para desbloquear ${item.name}!`,
-                          });
-                        }
-                      }}
-                      className={`flex flex-col items-center rounded-2xl border-2 p-4 text-center transition-all ${
-                        item.unlocked
-                          ? "border-pink-200 bg-[#fefcf9] hover:scale-105"
-                          : "border-gray-200 bg-gray-50 opacity-60"
-                      }`}
+                {/* Album Header Card */}
+                <div className="relative overflow-hidden rounded-2xl border-2 border-pink-100 bg-[#fdfaf6] p-4 shadow-inner">
+                  <div className="flex h-1.5 w-full absolute top-0 inset-x-0">
+                    <div className="flex-1 bg-pink-500" />
+                    <div className="flex-1 bg-teal-400" />
+                    <div className="flex-1 bg-yellow-400" />
+                    <div className="flex-1 bg-emerald-400" />
+                  </div>
+                  <h4 className="text-lg font-bold text-teal-800 mt-1">
+                    {selectedCategory === "fauna" ? "Fauna del Desierto" : selectedCategory === "flores" ? "Flores Silvestres" : "Comidas Típicas"}
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {selectedCategory === "fauna"
+                      ? "Colecciona las especies más icónicas del Gran Ecosistema Coahuilense."
+                      : selectedCategory === "flores"
+                      ? "Descubre la flora nacional de México y de sus distintos ecosistemas."
+                      : "Explora la gastronomía regional y los sabores emblemáticos de cada estado."
+                    }
+                  </p>
+                  {/* Progress bar */}
+                  <div className="mt-3 space-y-1">
+                    <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+                      <div className="h-full w-[16.6%] bg-pink-600 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stickers Grid */}
+                <div className="grid grid-cols-2 gap-3.5 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                  {/* Card 01: Unlocked */}
+                  <button
+                    onClick={() => {
+                      setSelectedSticker({
+                        id: "01",
+                        name: selectedCategory === "fauna" ? "El Guajolote" : selectedCategory === "flores" ? "Dalia" : "Pan Francés",
+                        scientific: selectedCategory === "fauna" ? "Guajolote Norteño" : selectedCategory === "flores" ? "Dahlia coccinea" : "Comarca Lagunera",
+                        description: selectedCategory === "fauna"
+                          ? "Especie majestuosa de la Sierra Madre del Desierto Coahuilense. Un animal de gran importancia ecológica."
+                          : selectedCategory === "flores"
+                          ? "Flor nacional de México desde 1963, famosa por sus pétalos y colores vibrantes."
+                          : "Delicioso pan tradicional y crujiente de la Laguna, ideal para comer con guisados.",
+                        unlocked: true,
+                        image: selectedCategory === "fauna" ? "🦃" : selectedCategory === "flores" ? "🌸" : "🍞",
+                        rarity: "Común"
+                      });
+                    }}
+                    className="flex flex-col items-center bg-white border border-pink-200 rounded-2xl p-2 relative shadow-sm hover:scale-[1.03] transition-all"
+                  >
+                    <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-black text-white bg-[#d80073]">
+                      01
+                    </div>
+                    <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
+                      {selectedCategory === "fauna" ? (
+                        <img src="/el-guajolote.png" className="w-full h-full object-contain hover:scale-105 transition-transform" />
+                      ) : (
+                        <span className="text-4xl">{selectedCategory === "flores" ? "🌸" : "🍞"}</span>
+                      )}
+                    </div>
+                    <span className="text-[11px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                      {selectedCategory === "fauna" ? "El Guajolote" : selectedCategory === "flores" ? "Dalia" : "Pan Francés"}
+                    </span>
+                  </button>
+
+                  {/* Cards 02 to 05: Locked with "?" */}
+                  {[2, 3, 4, 5].map((num) => (
+                    <div
+                      key={num}
+                      className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70"
                     >
-                      <div className="text-4xl mb-2 filter drop-shadow-sm">
-                        {item.unlocked ? item.image : "🔒"}
+                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
+                        0{num}
                       </div>
-                      <div className="text-sm font-bold text-gray-800">{item.name}</div>
-                      <div className="text-[10px] text-gray-500 mt-1 italic">
-                        {item.unlocked ? item.scientific : "Región Bloqueada"}
+                      <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
+                        <span className="text-xl font-bold text-gray-300">?</span>
                       </div>
-                    </button>
+                      <span className="text-[11px] font-bold text-gray-400 mt-2">???</span>
+                    </div>
                   ))}
+
+                  {/* Card 06: Locked with Padlock */}
+                  <div className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70">
+                    <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
+                      06
+                    </div>
+                    <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
+                      <Lock className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <span className="text-[11px] font-bold text-gray-400 mt-2">???</span>
+                  </div>
+                </div>
+
+                {/* Siguiente página button */}
+                <button
+                  onClick={() => toast.info("No hay más páginas", { description: "¡Completa más álbumes para desbloquear la siguiente página!" })}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-full bg-teal-700 py-2.5 text-xs font-black text-white transition hover:bg-teal-800"
+                >
+                  Siguiente página →
+                </button>
+
+                {/* Tips yellow card */}
+                <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100 flex items-start gap-2.5">
+                  <span className="text-xl">💡</span>
+                  <p className="text-[11px] font-semibold text-amber-800 leading-normal">
+                    {selectedCategory === "fauna"
+                      ? "¡Sigue explorando los Parques Nacionales para encontrar más sobres!"
+                      : selectedCategory === "flores"
+                      ? "¡Busca en los bosques y valles templados para recolectar más flores silvestres!"
+                      : "¡Sigue recorriendo los mercados locales para descubrir más platillos típicos!"
+                    }
+                  </p>
                 </div>
               </div>
             )}
