@@ -1,7 +1,18 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Play, Settings, Info } from "lucide-react";
+import { useState } from "react";
+import { Play, Settings, Info, Sun, Volume2, Bell } from "lucide-react";
 import bg from "@/assets/title-bg.png.asset.json";
 import logo from "@/assets/flores-logo.png.asset.json";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,10 +26,19 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const navigate = useNavigate();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
+  const [brightness, setBrightness] = useState([80]);
+  const [volume, setVolume] = useState([60]);
+  const [notifications, setNotifications] = useState(true);
+
   return (
     <div
       className="relative flex min-h-screen flex-col items-center justify-between bg-cover bg-center px-6 py-10"
-      style={{ backgroundImage: `url(${bg.url})` }}
+      style={{
+        backgroundImage: `url(${bg.url})`,
+        filter: `brightness(${0.4 + (brightness[0] / 100) * 0.8})`,
+      }}
     >
       <img
         src={logo.url}
@@ -35,10 +55,18 @@ function Index() {
         </button>
 
         <div className="flex gap-4">
-          <button className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Ajustes"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow transition hover:scale-105"
+          >
             <Settings className="h-5 w-5" />
           </button>
-          <button className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow">
+          <button
+            onClick={() => setInfoOpen(true)}
+            aria-label="Información"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-pink-600 shadow transition hover:scale-105"
+          >
             <Info className="h-5 w-5" />
           </button>
         </div>
@@ -47,6 +75,53 @@ function Index() {
           CELEBRANDO LA FLORA MEXICANA
         </p>
       </div>
+
+      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogContent className="rounded-2xl border-2 border-pink-300 bg-[#f7f1ea]">
+          <DialogHeader>
+            <DialogTitle className="text-pink-700">Ajustes</DialogTitle>
+            <DialogDescription>
+              Personaliza tu experiencia de juego.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 py-2">
+            <div>
+              <Label className="mb-2 flex items-center gap-2 text-sm font-bold text-gray-700">
+                <Sun className="h-4 w-4 text-pink-600" /> Brillo
+                <span className="ml-auto text-xs text-gray-500">{brightness[0]}%</span>
+              </Label>
+              <Slider value={brightness} onValueChange={setBrightness} max={100} step={1} />
+            </div>
+
+            <div>
+              <Label className="mb-2 flex items-center gap-2 text-sm font-bold text-gray-700">
+                <Volume2 className="h-4 w-4 text-pink-600" /> Volumen
+                <span className="ml-auto text-xs text-gray-500">{volume[0]}%</span>
+              </Label>
+              <Slider value={volume} onValueChange={setVolume} max={100} step={1} />
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-teal-300 bg-white px-4 py-3">
+              <Label htmlFor="notif" className="flex items-center gap-2 text-sm font-bold text-gray-700">
+                <Bell className="h-4 w-4 text-pink-600" /> Notificaciones
+              </Label>
+              <Switch id="notif" checked={notifications} onCheckedChange={setNotifications} />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={infoOpen} onOpenChange={setInfoOpen}>
+        <DialogContent className="rounded-2xl border-2 border-pink-300 bg-[#f7f1ea]">
+          <DialogHeader>
+            <DialogTitle className="text-pink-700">Información</DialogTitle>
+          </DialogHeader>
+          <p className="py-4 text-center text-base font-semibold text-gray-700">
+            Inicia sesión para jugar
+          </p>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
