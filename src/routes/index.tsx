@@ -31,6 +31,7 @@ function Index() {
   const [brightness, setBrightness] = useState([80]);
   const [volume, setVolume] = useState([60]);
   const [notifications, setNotifications] = useState(true);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
   return (
     <div
