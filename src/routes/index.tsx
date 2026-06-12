@@ -109,6 +109,13 @@ function Index() {
               </Label>
               <Switch id="notif" checked={notifications} onCheckedChange={setNotifications} />
             </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-teal-300 bg-white px-4 py-3">
+              <Label htmlFor="keep" className="flex items-center gap-2 text-sm font-bold text-gray-700">
+                <LogIn className="h-4 w-4 text-pink-600" /> Mantener sesión iniciada
+              </Label>
+              <Switch id="keep" checked={keepLoggedIn} onCheckedChange={setKeepLoggedIn} />
+            </div>
           </div>
         </DialogContent>
       </Dialog>
