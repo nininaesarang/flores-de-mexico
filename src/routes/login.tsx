@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Flower, KeyRound } from "lucide-react";
-import logo from "@/assets/flores-logo.png.asset.json";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -19,7 +18,7 @@ function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-[#f7f1ea] px-6 py-10">
       <img
-        src={logo.url}
+        src="/logo-flores.png"
         alt="Flores de México"
         className="mb-8 w-56 max-w-[70%] animate-float drop-shadow-xl"
       />
@@ -63,9 +62,9 @@ function LoginPage() {
             />
             Recordarme
           </label>
-          <a href="#" className="font-semibold text-teal-600 hover:underline">
+          <Link to="/forgot-password" className="font-semibold text-teal-600 hover:underline">
             ¿Olvidaste tu contraseña?
-          </a>
+          </Link>
         </div>
 
         <button
@@ -79,9 +78,9 @@ function LoginPage() {
           ¿Aún no tienes cuenta?
         </p>
         <p className="text-center">
-          <a href="#" className="font-extrabold tracking-wider text-pink-700">
+          <Link to="/register" className="font-extrabold tracking-wider text-pink-700 hover:underline">
             REGISTRARSE
-          </a>
+          </Link>
         </p>
       </form>
 

@@ -1,8 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Play, Settings, Info, Sun, Volume2, Bell, LogIn } from "lucide-react";
-import bg from "@/assets/title-bg.png.asset.json";
-import logo from "@/assets/flores-logo.png.asset.json";
 import {
   Dialog,
   DialogContent,
@@ -37,12 +35,12 @@ function Index() {
     <div
       className="relative flex min-h-screen flex-col items-center justify-between bg-cover bg-center px-6 py-10"
       style={{
-        backgroundImage: `url(${bg.url})`,
+        backgroundImage: `url(/bg-index.jpg)`,
         filter: `brightness(${0.4 + (brightness[0] / 100) * 0.8})`,
       }}
     >
       <img
-        src={logo.url}
+        src="/logo-flores.png"
         alt="Flores de México"
         className="mt-8 w-72 max-w-[80%] animate-float drop-shadow-xl"
       />
