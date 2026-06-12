@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Settings,
   HelpCircle,
@@ -261,8 +261,168 @@ const MEXICAN_STATES: MexicanState[] = [
   { id: "zacatecas", name: "Zacatecas", unlocked: false, logo: "⛰️", color: "from-stone-400 to-gray-500", spineColor: "border-l-stone-600" },
   { id: "cdmx", name: "CDMX", unlocked: false, logo: "🦎", color: "from-pink-500 to-fuchsia-600", spineColor: "border-l-pink-700" },
 ];
+// ── Tienda Banner Carousel ──────────────────────────────────────────────────
+const BANNER_SLIDES = [
+  {
+    id: 0,
+    bg: "linear-gradient(135deg, #e8006a 0%, #ff4fa3 60%, #c20059 100%)",
+    content: (
+      <div className="flex flex-col items-center justify-center h-full py-5 px-4 gap-2">
+        <img src="/logo-flores.png" alt="Flores de México" className="h-20 w-auto drop-shadow-xl" />
+        <p className="text-white/80 text-xs font-bold tracking-wide">¡Bienvenid@ a la Tienda!</p>
+      </div>
+    ),
+  },
+  {
+    id: 1,
+    bg: "linear-gradient(135deg, #7c3aed 0%, #a855f7 60%, #6d28d9 100%)",
+    content: (
+      <div className="flex flex-col items-center justify-center h-full py-5 px-6 gap-2 text-center">
+        <span className="text-4xl">🎟️</span>
+        <p className="text-white font-black text-base leading-tight">¡Boleto Dorado!</p>
+        <p className="text-purple-100 text-xs font-semibold">Viaja sin límites por 24 horas por solo $4.99</p>
+      </div>
+    ),
+  },
+  {
+    id: 2,
+    bg: "linear-gradient(135deg, #0d9488 0%, #14b8a6 60%, #0f766e 100%)",
+    content: (
+      <div className="flex flex-col items-center justify-center h-full py-5 px-6 gap-2 text-center">
+        <span className="text-4xl">✨</span>
+        <p className="text-white font-black text-base leading-tight">Nuevos trajes disponibles</p>
+        <p className="text-teal-100 text-xs font-semibold">Nuevo Outfit vibrante para Coahuila disponible</p>
+      </div>
+    ),
+  },
+];
+
+function TiendaBanner() {
+  const [current, setCurrent] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const startAutoPlay = () => {
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % BANNER_SLIDES.length);
+    }, 3500);
+  };
+
+  const stopAutoPlay = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+  };
+
+  useEffect(() => {
+    startAutoPlay();
+    return () => stopAutoPlay();
+  }, []);
+
+  const goTo = (idx: number) => {
+    stopAutoPlay();
+    setCurrent(idx);
+    startAutoPlay();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    stopAutoPlay();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) {
+      setCurrent((prev) =>
+        delta < 0
+          ? (prev + 1) % BANNER_SLIDES.length
+          : (prev - 1 + BANNER_SLIDES.length) % BANNER_SLIDES.length
+      );
+    }
+    touchStartX.current = null;
+    startAutoPlay();
+  };
+
+  const slide = BANNER_SLIDES[current];
+
+  return (
+    <div className="relative w-full rounded-3xl overflow-hidden mb-5 select-none" style={{ minHeight: 130 }}>
+      {/* Slide background with smooth transition */}
+      <div
+        className="absolute inset-0 transition-all duration-500 ease-in-out"
+        style={{ background: slide.bg }}
+      />
+      {/* Dot pattern overlay */}
+      <div
+        className="absolute inset-0 opacity-15 pointer-events-none"
+        style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "22px 22px" }}
+      />
+      {/* Slide content */}
+      <div
+        className="relative z-10 h-full"
+        style={{ minHeight: 130 }}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {slide.content}
+      </div>
+      {/* Dot indicators */}
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+        {BANNER_SLIDES.map((s, i) => (
+          <button
+            key={s.id}
+            onClick={() => goTo(i)}
+            className={`rounded-full transition-all duration-300 ${
+              i === current ? "w-5 h-1.5 bg-white opacity-95" : "w-1.5 h-1.5 bg-white opacity-40"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+// ────────────────────────────────────────────────────────────────────────────
+
+// ── Outfits / Ropa de Personajes Data ──────────────────────────────────────
+interface Outfit {
+  id: string;
+  name: string;
+  state: string;
+  price: number;
+  image: string;
+  badge?: string;
+  description: string;
+  funFact: string;
+  rarity: string;
+}
+
+const OUTFITS_DATA: Outfit[] = [
+  {
+    id: "coahuila-vaquera",
+    name: "Coahuila Vaquera",
+    state: "Coahuila",
+    price: 450,
+    image: "/coahuila-vaquera.png",
+    badge: "Nuevo",
+    rarity: "Raro",
+    description: "Coahuila se viste a la moda vaquera: Sombrero de ala ancha, botas de piel, chaqueta con print de vaca y falda con lentejuelas.",
+    funFact: "¿Sabías que la cultura vaquera es una de las más importantes del norte de México? En Coahuila es muy común ver personas montando a caballo y portando ropa vaquera en su vida diaria.",
+  },
+  {
+    id: "coahuila-santos",
+    name: "Coahuila Santos Laguna",
+    state: "Coahuila",
+    price: 600,
+    image: "/coahuila-santos.png",
+    badge: undefined,
+    rarity: "Épico",
+    description: "¡Apoya al equipo Santos Laguna con este outfit oficial! Camiseta verde y blanca del equipo lagunero, shorts deportivos y calcetas del club.",
+    funFact: "¿Sabías que Santos Laguna es el equipo de fútbol más popular de la Comarca Lagunera? Fue fundado en 1983 y representa tanto a Torreón, Coahuila como a Gómez Palacio, Durango.",
+  },
+];
+// ────────────────────────────────────────────────────────────────────────────
 
 function JugarPage() {
+
 
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"jugar" | "coleccion" | "tienda" | "perfil">("jugar");
@@ -337,6 +497,8 @@ function JugarPage() {
 
   // Selected Sticker Modal State
   const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
+  const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
+  const [ropaViewOpen, setRopaViewOpen] = useState(false);
 
 
   const appLink = "https://floresdemexico.app";
@@ -828,7 +990,7 @@ function JugarPage() {
                           scientific: "San Pedro, Coahuila",
                           description: "Cuna de la Revolución Mexicana. El histórico edificio donde Francisco I. Madero escribió gran parte de su libro 'La Sucesión Presidencial'.",
                           unlocked: true,
-                          image: "🏛️",
+                          image: "/museo-madero.png?v=2026",
                           rarity: "Histórico"
                         });
                       }}
@@ -838,7 +1000,7 @@ function JugarPage() {
                         01
                       </div>
                       <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
-                        <img src="/museo-madero.png" className="w-full h-full object-contain hover:scale-105 transition-transform" />
+                        <img src="/museo-madero.png?v=2026" className="w-full h-full object-contain hover:scale-105 transition-transform" />
                       </div>
                       <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
                         Museo Madero (San Pedro)
@@ -946,7 +1108,7 @@ function JugarPage() {
                           ? "Flor nacional de México desde 1963, famosa por sus pétalos y colores vibrantes."
                           : "Delicioso pan tradicional y crujiente de la Laguna, ideal para comer con guisados.",
                         unlocked: true,
-                        image: selectedCategory === "fauna" ? "🦃" : selectedCategory === "flores" ? "🌸" : "🍞",
+                        image: selectedCategory === "fauna" ? "/el-guajolote.png?v=2026" : selectedCategory === "flores" ? "🌸" : "🍞",
                         rarity: "Común"
                       });
                     }}
@@ -957,7 +1119,7 @@ function JugarPage() {
                     </div>
                     <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
                       {selectedCategory === "fauna" ? (
-                        <img src="/el-guajolote.png" className="w-full h-full object-contain hover:scale-105 transition-transform" />
+                        <img src="/el-guajolote.png?v=2026" className="w-full h-full object-contain hover:scale-105 transition-transform" />
                       ) : (
                         <span className="text-4xl">{selectedCategory === "flores" ? "🌸" : "🍞"}</span>
                       )}
@@ -1017,38 +1179,221 @@ function JugarPage() {
 
         {/* Tienda Tab View */}
         {activeTab === "tienda" && (
-          <div className="space-y-4 animate-fade-in-slide-up">
-            <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm">
-              <h2 className="mb-4 text-center text-lg font-bold text-pink-700 flex items-center justify-center gap-2">
-                <ShoppingBag className="h-5 w-5 text-pink-600" /> Tienda Botánica
-              </h2>
+          <div className="animate-fade-in-slide-up pb-2">
 
-              {/* Shop Items List */}
-              <div className="space-y-3">
-                {SHOP_ITEMS.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between rounded-2xl border border-pink-100 bg-[#fefcf9] p-3 shadow-inner"
+            {/* ── Vista: Ver Todo Ropa ── */}
+            {ropaViewOpen ? (
+              <div className="space-y-4">
+                {/* Header con botón Volver */}
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={() => setRopaViewOpen(false)}
+                    className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="text-3xl">{item.icon}</div>
-                      <div>
-                        <div className="text-sm font-bold text-gray-800">{item.name}</div>
-                        <div className="max-w-[200px] text-[10px] text-gray-500 leading-tight">
-                          {item.description}
+                    <ChevronLeft className="h-4 w-4" /> Volver a Tienda
+                  </button>
+                  <h3 className="text-base font-extrabold text-gray-800">Ropa de Personajes</h3>
+                  <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
+                    <span className="text-[10px]">👗</span> {OUTFITS_DATA.length}
+                  </div>
+                </div>
+
+                {/* Grid de outfits */}
+                <div className="grid grid-cols-2 gap-4">
+                  {OUTFITS_DATA.map((outfit) => (
+                    <button
+                      key={outfit.id}
+                      onClick={() => setSelectedOutfit(outfit)}
+                      className="flex flex-col rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden text-left active:scale-95 transition-transform"
+                    >
+                      <div className="relative flex items-end justify-center bg-[#f5f5f0] h-52 overflow-hidden">
+                        {outfit.badge && (
+                          <span className="absolute top-2 left-2 bg-[#1aab6d] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                            {outfit.badge}
+                          </span>
+                        )}
+                        <span className="absolute top-2 right-2 rounded-full bg-pink-100 px-2 py-0.5 text-[9px] font-black text-pink-700">
+                          {outfit.rarity}
+                        </span>
+                        <img
+                          src={outfit.image}
+                          alt={outfit.name}
+                          className="h-48 w-auto object-contain object-bottom drop-shadow-md"
+                        />
+                      </div>
+                      <div className="p-3">
+                        <p className="text-xs font-bold text-gray-800 leading-tight mb-0.5">{outfit.name}</p>
+                        <p className="text-[10px] text-gray-400 font-medium mb-2">{outfit.state}</p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-black text-pink-600">{outfit.price} MXN</span>
+                          <span className="text-[10px] font-bold text-pink-500 underline underline-offset-2">Ver info →</span>
                         </div>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => handleBuyItem(item)}
-                      className="flex items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-xs font-extrabold text-white transition hover:bg-amber-600 shadow-sm"
-                    >
-                      {item.cost} MXN
                     </button>
+                  ))}
+                </div>
+
+                {/* Más próximamente */}
+                <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-6 flex flex-col items-center gap-2 text-center">
+                  <Lock className="h-7 w-7 text-gray-300" />
+                  <p className="text-xs font-bold text-gray-400">Más outfits próximamente</p>
+                  <p className="text-[10px] text-gray-300">Continúa explorando México para desbloquear más ropa</p>
+                </div>
+              </div>
+            ) : (
+              <>
+            {/* ── Tablón de Anuncios (Carousel) ── */}
+            <TiendaBanner />
+
+            {/* ── Ropa de Personajes ── */}
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-3 px-1">
+                <h2 className="text-lg font-black text-gray-900">Ropa de Personajes</h2>
+                <button
+                  onClick={() => setRopaViewOpen(true)}
+                  className="text-xs font-bold text-pink-600 hover:text-pink-800 transition"
+                >Ver Todo</button>
+              </div>
+
+              {/* Horizontal scrollable cards */}
+              <div className="flex gap-3 overflow-x-auto scrollbar-none pb-2">
+                {/* Card: Coahuila Vaquera */}
+                <div className="flex-shrink-0 w-40 rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="relative bg-[#f5f5f0] flex items-end justify-center h-44 overflow-hidden">
+                    <span className="absolute top-2 left-2 bg-[#1aab6d] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">Nuevo</span>
+                    <img src="/coahuila-vaquera.png" alt="Coahuila Vaquera" className="h-40 w-auto object-contain object-bottom drop-shadow-md" />
                   </div>
-                ))}
+                  <div className="p-2.5">
+                    <p className="text-xs font-bold text-gray-800 leading-tight mb-1">Coahuila Vaquera</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-black text-pink-600">450 MXN</span>
+                      <button
+                        onClick={() => toast.success("¡Coahuila Vaquera añadida!", { description: "Se han deducido 450 MXN de tu saldo." })}
+                        className="flex items-center justify-center h-7 w-7 rounded-full bg-pink-600 text-white shadow hover:bg-pink-700 transition"
+                      >
+                        <ShoppingBag className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card: Coahuila Santos Laguna */}
+                <div className="flex-shrink-0 w-40 rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden">
+                  <div className="relative bg-[#f0f5f0] flex items-end justify-center h-44 overflow-hidden">
+                    <img src="/coahuila-santos.png" alt="Coahuila Santos Laguna" className="h-40 w-auto object-contain object-bottom drop-shadow-md" />
+                  </div>
+                  <div className="p-2.5">
+                    <p className="text-xs font-bold text-gray-800 leading-tight mb-1">Coahuila Santos Laguna</p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-black text-pink-600">600 MXN</span>
+                      <button
+                        onClick={() => toast.success("¡Coahuila Santos Laguna añadida!", { description: "Se han deducido 600 MXN de tu saldo." })}
+                        className="flex items-center justify-center h-7 w-7 rounded-full bg-pink-600 text-white shadow hover:bg-pink-700 transition"
+                      >
+                        <ShoppingBag className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Placeholder card 3 */}
+                <div className="flex-shrink-0 w-40 rounded-2xl bg-white border border-dashed border-gray-200 shadow-sm overflow-hidden flex flex-col items-center justify-center h-[13.5rem]">
+                  <Lock className="h-8 w-8 text-gray-300 mb-2" />
+                  <p className="text-[10px] text-gray-400 font-bold text-center px-4">Próximamente</p>
+                </div>
               </div>
             </div>
+
+            {/* ── Stickers ── */}
+            <div className="mb-5">
+              <h2 className="text-lg font-black text-gray-900 mb-3 px-1">Stickers</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {/* Flora card */}
+                <div className="relative rounded-2xl overflow-hidden h-28 shadow-sm cursor-pointer group"
+                  style={{ background: "linear-gradient(135deg, #6b3e26 0%, #a0522d 50%, #8b6914 100%)" }}
+                  onClick={() => { setActiveTab("coleccion"); setSelectedCategory("flores"); }}
+                >
+                  <div className="absolute inset-0 flex flex-col justify-end p-3">
+                    <div className="text-3xl mb-1 opacity-70 group-hover:opacity-100 transition">🌸</div>
+                    <span className="text-white font-black text-base tracking-wider uppercase drop-shadow">FLORA</span>
+                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition rounded-2xl" />
+                </div>
+
+                {/* Fauna card */}
+                <div className="relative rounded-2xl overflow-hidden h-28 shadow-sm cursor-pointer group"
+                  style={{ background: "linear-gradient(135deg, #1a5c4f 0%, #2d8a6e 50%, #1e6e5e 100%)" }}
+                  onClick={() => { setActiveTab("coleccion"); setSelectedCategory("fauna"); }}
+                >
+                  <div className="absolute inset-0 flex flex-col justify-end p-3">
+                    <div className="text-3xl mb-1 opacity-70 group-hover:opacity-100 transition">🦋</div>
+                    <span className="text-white font-black text-base tracking-wider uppercase drop-shadow">FAUNA</span>
+                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition rounded-2xl" />
+                </div>
+
+                {/* Comida — wide card */}
+                <div className="relative col-span-2 rounded-2xl overflow-hidden h-20 shadow-sm cursor-pointer group"
+                  style={{ background: "linear-gradient(135deg, #c8a200 0%, #e6bb00 50%, #b89500 100%)" }}
+                  onClick={() => { setActiveTab("coleccion"); setSelectedCategory("comidas"); }}
+                >
+                  <div className="absolute inset-0 flex items-center justify-between px-5">
+                    <div>
+                      <span className="text-white font-black text-lg tracking-wider uppercase drop-shadow">COMIDA</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl opacity-80">🍳</span>
+                      <span className="text-2xl opacity-80">🌮</span>
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition rounded-2xl" />
+                </div>
+              </div>
+            </div>
+
+            {/* ── Recursos ── */}
+            <div className="mb-2">
+              <h2 className="text-lg font-black text-gray-900 mb-3 px-1">Recursos</h2>
+              <div className="space-y-3">
+                {/* Bolsa de Monedas */}
+                <div className="flex items-center gap-3 rounded-2xl border border-teal-200 bg-white p-3.5 shadow-sm">
+                  <div className="flex-shrink-0 flex items-center justify-center h-11 w-11 rounded-full bg-teal-50 border border-teal-200">
+                    <Coins className="h-5 w-5 text-teal-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-800">Bolsa de Monedas</p>
+                    <p className="text-[10px] text-gray-400 font-semibold">5,000 MXN Monedas</p>
+                  </div>
+                  <button
+                    onClick={() => toast.success("¡Bolsa de monedas comprada!", { description: "Se han agregado 5,000 MXN a tu saldo." })}
+                    className="flex-shrink-0 rounded-xl bg-[#1aab6d] px-4 py-2 text-xs font-black text-white shadow hover:bg-[#159959] transition"
+                  >
+                    $1.99
+                  </button>
+                </div>
+
+                {/* Boleto Dorado */}
+                <div className="flex items-center gap-3 rounded-2xl border border-pink-200 bg-white p-3.5 shadow-sm">
+                  <div className="flex-shrink-0 flex items-center justify-center h-11 w-11 rounded-full bg-pink-50 border border-pink-200">
+                    <Ticket className="h-5 w-5 text-pink-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-gray-800">Boleto Dorado</p>
+                    <p className="text-[10px] text-gray-400 font-semibold">Viaja de manera ilimitada por 24hrs</p>
+                  </div>
+                  <button
+                    onClick={() => { setEnergy(10); toast.success("¡Boleto Dorado activado!", { description: "Tienes energía ilimitada por 24 horas." }); }}
+                    className="flex-shrink-0 rounded-xl bg-[#d80073] px-4 py-2 text-xs font-black text-white shadow hover:bg-[#b5005e] transition"
+                  >
+                    $4.99
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            </>
+            )}
+
           </div>
         )}
 
@@ -1349,8 +1694,12 @@ function JugarPage() {
         <DialogContent className="rounded-3xl border-2 border-pink-300 bg-[#f7f1ea] max-w-[90%] md:max-w-md p-6">
           {selectedSticker && (
             <div className="text-center space-y-4">
-              <div className="text-7xl filter drop-shadow-md animate-float my-2">
-                {selectedSticker.image}
+              <div className="text-7xl filter drop-shadow-md animate-float my-2 flex justify-center">
+                {selectedSticker.image.startsWith("/") || selectedSticker.image.endsWith(".png") ? (
+                  <img src={selectedSticker.image} alt={selectedSticker.name} className="h-32 object-contain" />
+                ) : (
+                  selectedSticker.image
+                )}
               </div>
 
               <div>
@@ -1376,6 +1725,81 @@ function JugarPage() {
               >
                 CERRAR DETALLES
               </button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Outfit Detail Dialog (Tienda → Ropa de Personajes) */}
+      <Dialog
+        open={selectedOutfit !== null}
+        onOpenChange={(open) => !open && setSelectedOutfit(null)}
+      >
+        <DialogContent className="rounded-3xl border-2 border-pink-300 bg-[#f7f1ea] max-w-[90%] md:max-w-md p-6">
+          {selectedOutfit && (
+            <div className="text-center space-y-4">
+              {/* Character image */}
+              <div className="flex justify-center animate-float my-2">
+                <img
+                  src={selectedOutfit.image}
+                  alt={selectedOutfit.name}
+                  className="h-44 object-contain drop-shadow-lg"
+                />
+              </div>
+
+              {/* Name + state */}
+              <div>
+                <DialogTitle className="text-pink-700 font-extrabold text-xl">
+                  {selectedOutfit.name}
+                </DialogTitle>
+                <span className="text-xs italic text-gray-500 block mt-0.5">
+                  {selectedOutfit.state}
+                </span>
+              </div>
+
+              {/* Rarity badge */}
+              <div className="flex items-center justify-center gap-2">
+                <div className="inline-block rounded-full bg-pink-100 px-3.5 py-1 text-xs font-black text-pink-700 uppercase">
+                  {selectedOutfit.rarity}
+                </div>
+                <div className="inline-block rounded-full bg-amber-100 px-3.5 py-1 text-xs font-black text-amber-700">
+                  {selectedOutfit.price} MXN
+                </div>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-gray-700 bg-white p-4 rounded-2xl border border-pink-100 shadow-inner leading-relaxed text-left">
+                {selectedOutfit.description}
+              </p>
+
+              {/* Fun fact */}
+              <div className="flex items-start gap-2 rounded-2xl bg-amber-50 border border-amber-100 p-3.5 text-left">
+                <span className="text-lg">💡</span>
+                <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
+                  {selectedOutfit.funFact}
+                </p>
+              </div>
+
+              {/* Buy + Close */}
+              <div className="flex gap-2 pt-1">
+                <button
+                  onClick={() => {
+                    toast.success(`¡${selectedOutfit.name} añadida!`, {
+                      description: `Se han deducido ${selectedOutfit.price} MXN de tu saldo.`,
+                    });
+                    setSelectedOutfit(null);
+                  }}
+                  className="flex-1 rounded-full bg-[#d80073] py-3 font-bold text-white shadow transition hover:bg-[#b5005e]"
+                >
+                  Comprar — {selectedOutfit.price} MXN
+                </button>
+                <button
+                  onClick={() => setSelectedOutfit(null)}
+                  className="rounded-full border-2 border-pink-200 bg-white px-4 py-3 font-bold text-pink-700 transition hover:bg-pink-50"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
           )}
         </DialogContent>
