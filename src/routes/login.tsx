@@ -90,7 +90,7 @@ function LoginPage() {
       </Link>
 
       <p className="mt-8 text-[10px] tracking-widest text-gray-400">
-        © 2024 FLORES DE MÉXICO GAME STUDIO
+        © 2026 NINI TECHNOLOGIES
       </p>
     </div>
   );
