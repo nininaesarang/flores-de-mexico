@@ -208,7 +208,62 @@ const CATEGORIES_DATA = [
   }
 ];
 
+export interface Sticker {
+  id: string;
+  name: string;
+  scientific: string;
+  description: string;
+  unlocked: boolean;
+  image: string;
+  rarity?: string;
+}
+
+export interface MexicanState {
+  id: string;
+  name: string;
+  unlocked: boolean;
+  logo: string;
+  color: string;
+  spineColor: string;
+}
+
+const MEXICAN_STATES: MexicanState[] = [
+  { id: "coahuila", name: "Coahuila", unlocked: true, logo: "🌵", color: "from-amber-400 to-orange-500", spineColor: "border-l-amber-700" },
+  { id: "aguascalientes", name: "Aguascalientes", unlocked: false, logo: "🍇", color: "from-pink-400 to-rose-500", spineColor: "border-l-pink-700" },
+  { id: "bajacalifornia", name: "Baja California", unlocked: false, logo: "🌊", color: "from-blue-400 to-cyan-500", spineColor: "border-l-blue-700" },
+  { id: "bajacaliforniasur", name: "Baja California Sur", unlocked: false, logo: "🐋", color: "from-teal-400 to-emerald-500", spineColor: "border-l-teal-700" },
+  { id: "campeche", name: "Campeche", unlocked: false, logo: "🏰", color: "from-indigo-400 to-purple-500", spineColor: "border-l-indigo-700" },
+  { id: "chiapas", name: "Chiapas", unlocked: false, logo: "🐆", color: "from-green-500 to-emerald-600", spineColor: "border-l-green-700" },
+  { id: "chihuahua", name: "Chihuahua", unlocked: false, logo: "🐕", color: "from-yellow-500 to-amber-600", spineColor: "border-l-yellow-700" },
+  { id: "colima", name: "Colima", unlocked: false, logo: "🌋", color: "from-orange-400 to-red-500", spineColor: "border-l-orange-700" },
+  { id: "durango", name: "Durango", unlocked: false, logo: "🦂", color: "from-amber-600 to-yellow-700", spineColor: "border-l-amber-800" },
+  { id: "guanajuato", name: "Guanajuato", unlocked: false, logo: "🐸", color: "from-lime-400 to-green-500", spineColor: "border-l-lime-700" },
+  { id: "guerrero", name: "Guerrero", unlocked: false, logo: "🌅", color: "from-rose-400 to-red-500", spineColor: "border-l-rose-700" },
+  { id: "hidalgo", name: "Hidalgo", unlocked: false, logo: "⛰️", color: "from-emerald-400 to-teal-600", spineColor: "border-l-emerald-700" },
+  { id: "jalisco", name: "Jalisco", unlocked: false, logo: "🎸", color: "from-sky-400 to-blue-600", spineColor: "border-l-sky-700" },
+  { id: "mexico", name: "Edo. de México", unlocked: false, logo: "🌲", color: "from-green-400 to-emerald-600", spineColor: "border-l-green-700" },
+  { id: "michoacan", name: "Michoacán", unlocked: false, logo: "🦋", color: "from-purple-400 to-pink-500", spineColor: "border-l-purple-700" },
+  { id: "morelos", name: "Morelos", unlocked: false, logo: "⛲", color: "from-cyan-400 to-teal-500", spineColor: "border-l-cyan-700" },
+  { id: "nayarit", name: "Nayarit", unlocked: false, logo: "🌴", color: "from-teal-300 to-emerald-500", spineColor: "border-l-teal-600" },
+  { id: "nuevoleon", name: "Nuevo León", unlocked: false, logo: "🦁", color: "from-blue-500 to-indigo-600", spineColor: "border-l-blue-700" },
+  { id: "oaxaca", name: "Oaxaca", unlocked: false, logo: "🏺", color: "from-amber-500 to-orange-700", spineColor: "border-l-amber-700" },
+  { id: "puebla", name: "Puebla", unlocked: false, logo: "🎨", color: "from-violet-400 to-purple-600", spineColor: "border-l-violet-700" },
+  { id: "queretaro", name: "Querétaro", unlocked: false, logo: "⛪", color: "from-rose-300 to-pink-500", spineColor: "border-l-rose-600" },
+  { id: "quintanaroo", name: "Quintana Roo", unlocked: false, logo: "🏖️", color: "from-cyan-300 to-blue-500", spineColor: "border-l-cyan-600" },
+  { id: "sanluispotosi", name: "San Luis Potosí", unlocked: false, logo: "🏰", color: "from-orange-300 to-amber-500", spineColor: "border-l-orange-500" },
+  { id: "sinaloa", name: "Sinaloa", unlocked: false, logo: "🍅", color: "from-red-400 to-rose-500", spineColor: "border-l-red-600" },
+  { id: "sonora", name: "Sonora", unlocked: false, logo: "☀️", color: "from-yellow-400 to-orange-500", spineColor: "border-l-yellow-600" },
+  { id: "tabasco", name: "Tabasco", unlocked: false, logo: "🍌", color: "from-green-400 to-lime-500", spineColor: "border-l-green-600" },
+  { id: "tamaulipas", name: "Tamaulipas", unlocked: false, logo: "🤠", color: "from-amber-600 to-yellow-700", spineColor: "border-l-amber-800" },
+  { id: "tlaxcala", name: "Tlaxcala", unlocked: false, logo: "🌽", color: "from-rose-500 to-red-600", spineColor: "border-l-rose-700" },
+  { id: "veracruz", name: "Veracruz", unlocked: false, logo: "☕", color: "from-blue-600 to-indigo-700", spineColor: "border-l-blue-800" },
+  { id: "yucatan", name: "Yucatán", unlocked: false, logo: "🌴", color: "from-teal-400 to-green-500", spineColor: "border-l-teal-650" },
+  { id: "zacatecas", name: "Zacatecas", unlocked: false, logo: "⛰️", color: "from-stone-400 to-gray-500", spineColor: "border-l-stone-600" },
+  { id: "cdmx", name: "CDMX", unlocked: false, logo: "🦎", color: "from-pink-500 to-fuchsia-600", spineColor: "border-l-pink-700" },
+];
+
 function JugarPage() {
+
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"jugar" | "coleccion" | "tienda" | "perfil">("jugar");
   const [selectedState, setSelectedState] = useState(STATES_DATA[0]);
@@ -277,8 +332,12 @@ function JugarPage() {
   // Share Dialog State
   const [shareOpen, setShareOpen] = useState(false);
 
+  // Selected State Album State
+  const [selectedStateAlbum, setSelectedStateAlbum] = useState<string | null>(null);
+
   // Selected Sticker Modal State
-  const [selectedSticker, setSelectedSticker] = useState<typeof STICKERS_DATA[0] | null>(null);
+  const [selectedSticker, setSelectedSticker] = useState<Sticker | null>(null);
+
 
   const appLink = "https://floresdemexico.app";
 
@@ -657,7 +716,7 @@ function JugarPage() {
                   </div>
 
                   {/* Horizontal scrolling grid in two rows */}
-                  <div className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 scrollbar-none snap-x w-full">
+                  <div className="grid grid-rows-2 grid-flow-col gap-4 overflow-x-auto pb-4 scrollbar-none snap-x w-full select-none touch-pan-x scroll-smooth">
                     {MEXICAN_STATES.map((state) => (
                       <div key={state.id} className="flex flex-col items-center gap-2 snap-center w-24">
                         <button
@@ -670,32 +729,39 @@ function JugarPage() {
                               });
                             }
                           }}
-                          className={`relative h-32 w-24 rounded-r-xl rounded-l-md border-y-2 border-r-4 border-l-8 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 ${
+                          className={`relative h-32 w-24 rounded-r-xl rounded-l-md border-y border-r-2 shadow-md transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center justify-center ${
                             state.unlocked
-                              ? `bg-gradient-to-br ${state.color} border-pink-300 border-l-[#3a001a]`
-                              : "bg-gray-200 border-gray-300 border-l-gray-400 opacity-60"
+                              ? `bg-gradient-to-br ${state.color} border-pink-300 border-l-[8px] ${state.spineColor} cursor-pointer`
+                              : "bg-gray-100 border-gray-300 border-l-[8px] border-l-gray-400 cursor-not-allowed"
                           }`}
                         >
-                          {/* Spine binding effect */}
-                          <div className="absolute inset-y-0 left-0 w-0.5 bg-black/10" />
+                          {/* Spine shading */}
+                          <div className="absolute inset-y-0 left-0 w-0.5 bg-black/15" />
+                          
+                          {/* Page edges representation on the right side */}
+                          <div className="absolute top-1 bottom-1 right-0 w-1 bg-amber-50 rounded-r-md border-l border-amber-200/40 shadow-[inset_1px_0_1px_rgba(0,0,0,0.08)]" />
+
                           {state.unlocked && (
-                            <div className="absolute inset-1.5 border border-amber-400/30 rounded pointer-events-none" />
+                            <div className="absolute inset-1.5 border border-amber-400/20 rounded pointer-events-none" />
                           )}
 
-                          {/* Logo on cover */}
-                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
-                            <span className="text-3xl filter drop-shadow">{state.logo}</span>
-                            {state.unlocked && (
-                              <span className="text-[8px] font-black tracking-widest text-amber-300 uppercase">
-                                ABRIR
-                              </span>
-                            )}
+                          {/* Logo on cover - styled like a sticker stuck to the cover */}
+                          <div className={`relative flex h-13 w-13 items-center justify-center rounded-full bg-white shadow-md border-2 border-white transform transition-transform duration-300 ${state.unlocked ? 'hover:scale-110 rotate-3' : 'opacity-70 -rotate-3 filter grayscale-[40%]'}`}>
+                            <span className="text-2xl filter drop-shadow-sm select-none">{state.logo}</span>
                           </div>
+
+                          {state.unlocked && (
+                            <span className="mt-2 text-[7px] font-black tracking-wider text-white bg-black/25 px-1.5 py-0.5 rounded uppercase">
+                              ABRIR
+                            </span>
+                          )}
 
                           {/* Lock Overlay */}
                           {!state.unlocked && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-r-xl rounded-l-md">
-                              <Lock className="h-5 w-5 text-gray-500" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-r-xl rounded-l-md">
+                              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-black/30 backdrop-blur-[1px] text-white">
+                                <Lock className="h-3 w-3" />
+                              </div>
                             </div>
                           )}
                         </button>
@@ -779,32 +845,27 @@ function JugarPage() {
                       </span>
                     </button>
 
-                    {/* Cards 02 to 05: Locked with "?" inside */}
-                    {[2, 3, 4, 5].map((num) => (
+                    {/* Cards 02 to 06: Locked, blank albums with a lock icon */}
+                    {[2, 3, 4, 5, 6].map((num) => (
                       <div
                         key={num}
-                        className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70"
+                        className="flex flex-col items-center justify-center bg-white border border-gray-250 rounded-2xl p-2.5 aspect-square relative shadow-xs"
                       >
-                        <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
+                        <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-gray-400 bg-gray-50 border border-gray-100">
                           0{num}
                         </div>
-                        <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
-                          <span className="text-xl font-bold text-gray-300">?</span>
+                        
+                        {/* Blank slot with lock icon */}
+                        <div className="flex flex-col items-center justify-center gap-1.5 mt-2">
+                          <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 border border-gray-100/80 text-gray-300">
+                            <Lock className="h-4 w-4 text-gray-300" />
+                          </div>
+                          <span className="text-[9px] font-black text-gray-400 tracking-wider">
+                            BLOQUEADO
+                          </span>
                         </div>
-                        <span className="text-[10px] font-bold text-gray-400 mt-2">???</span>
                       </div>
                     ))}
-
-                    {/* Card 06: Locked with Padlock */}
-                    <div className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70">
-                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
-                        06
-                      </div>
-                      <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
-                        <Lock className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <span className="text-[10px] font-bold text-gray-400 mt-2">???</span>
-                    </div>
                   </div>
 
                   {/* Navigation Buttons */}
@@ -906,32 +967,27 @@ function JugarPage() {
                     </span>
                   </button>
 
-                  {/* Cards 02 to 05: Locked with "?" */}
-                  {[2, 3, 4, 5].map((num) => (
+                  {/* Cards 02 to 06: Locked, blank albums with a lock icon */}
+                  {[2, 3, 4, 5, 6].map((num) => (
                     <div
                       key={num}
-                      className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70"
+                      className="flex flex-col items-center justify-center bg-white border border-gray-255 rounded-2xl p-2.5 aspect-square relative shadow-xs"
                     >
-                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
+                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-gray-400 bg-gray-50 border border-gray-100">
                         0{num}
                       </div>
-                      <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
-                        <span className="text-xl font-bold text-gray-300">?</span>
+                      
+                      {/* Blank slot with lock icon */}
+                      <div className="flex flex-col items-center justify-center gap-1.5 mt-2">
+                        <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 border border-gray-100/80 text-gray-300">
+                          <Lock className="h-4 w-4 text-gray-300" />
+                        </div>
+                        <span className="text-[9px] font-black text-gray-400 tracking-wider">
+                          BLOQUEADO
+                        </span>
                       </div>
-                      <span className="text-[11px] font-bold text-gray-400 mt-2">???</span>
                     </div>
                   ))}
-
-                  {/* Card 06: Locked with Padlock */}
-                  <div className="flex flex-col items-center bg-gray-50/50 border border-gray-100 rounded-2xl p-2 relative opacity-70">
-                    <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-white bg-gray-400">
-                      06
-                    </div>
-                    <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-gray-100">
-                      <Lock className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <span className="text-[11px] font-bold text-gray-400 mt-2">???</span>
-                  </div>
                 </div>
 
                 {/* Siguiente página button */}
