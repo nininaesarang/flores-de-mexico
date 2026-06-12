@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Play, Settings, Info, Sun, Volume2, Bell } from "lucide-react";
+import { Play, Settings, Info, Sun, Volume2, Bell, LogIn } from "lucide-react";
 import bg from "@/assets/title-bg.png.asset.json";
 import logo from "@/assets/flores-logo.png.asset.json";
 import {
@@ -31,6 +31,7 @@ function Index() {
   const [brightness, setBrightness] = useState([80]);
   const [volume, setVolume] = useState([60]);
   const [notifications, setNotifications] = useState(true);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
   return (
     <div
@@ -107,6 +108,13 @@ function Index() {
                 <Bell className="h-4 w-4 text-pink-600" /> Notificaciones
               </Label>
               <Switch id="notif" checked={notifications} onCheckedChange={setNotifications} />
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl border border-teal-300 bg-white px-4 py-3">
+              <Label htmlFor="keep" className="flex items-center gap-2 text-sm font-bold text-gray-700">
+                <LogIn className="h-4 w-4 text-pink-600" /> Mantener sesión iniciada
+              </Label>
+              <Switch id="keep" checked={keepLoggedIn} onCheckedChange={setKeepLoggedIn} />
             </div>
           </div>
         </DialogContent>
