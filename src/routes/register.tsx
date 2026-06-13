@@ -30,6 +30,10 @@ function RegisterPage() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
+          const cleanUsername = username.replace(/@/g, "").trim();
+          if (cleanUsername) {
+            localStorage.setItem("username", cleanUsername);
+          }
           navigate({ to: "/jugar" });
         }}
         className="w-full max-w-md rounded-2xl border-2 border-dashed border-pink-300 bg-white p-6 shadow-sm"
@@ -43,7 +47,7 @@ function RegisterPage() {
             type="text"
             placeholder="Tu nombre de explorador"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value.replace(/@/g, ""))}
             className="w-full bg-transparent text-sm outline-none"
           />
         </div>

@@ -26,6 +26,8 @@ import {
   Utensils,
   Box,
   Flower,
+  Camera,
+  Pencil,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
@@ -132,8 +134,33 @@ const SHOP_ITEMS = [
   },
 ];
 
+export interface Sticker {
+  id: string;
+  name: string;
+  scientific: string;
+  description: string;
+  unlocked: boolean;
+  image: string;
+  rarity?: string;
+  price?: number;
+}
+
+export interface Category {
+  id: string;
+  title: string;
+  icon: any;
+  iconBg: string;
+  iconColor: string;
+  badge: string;
+  percent: number;
+  borderColor: string;
+  textColor: string;
+  progressBg: string;
+  items: Sticker[];
+}
+
 // Mock Stickers & Categories Data
-const CATEGORIES_DATA = [
+const CATEGORIES_DATA: Category[] = [
   {
     id: "estados",
     title: "Estados",
@@ -146,10 +173,10 @@ const CATEGORIES_DATA = [
     textColor: "text-[#70003c]",
     progressBg: "bg-pink-600",
     items: [
-      { id: "coahuila", name: "Coahuila", scientific: "Saltillo & Torreón", description: "Estado de desiertos y rica historia industrial. Región norte de México.", unlocked: true, image: "🌵" },
-      { id: "yucatan", name: "Yucatán", scientific: "Mérida", description: "Cuna de la cultura maya, selvas y cenotes turquesas.", unlocked: true, image: "🌴" },
-      { id: "jalisco", name: "Jalisco", scientific: "Guadalajara", description: "Tierra del mariachi y el tequila, con hermosos valles.", unlocked: true, image: "🎸" },
-      { id: "oaxaca", name: "Oaxaca", scientific: "Oaxaca de Juárez", description: "Corazón cultural y megadiverso con sierras y tradiciones únicas.", unlocked: false, image: "🏺" },
+      { id: "coahuila", name: "Coahuila", scientific: "Saltillo & Torreón", description: "Estado de desiertos y rica historia industrial. Región norte de México.", unlocked: true, image: "🌵", rarity: "Estado" },
+      { id: "yucatan", name: "Yucatán", scientific: "Mérida", description: "Cuna de la cultura maya, selvas y cenotes turquesas.", unlocked: true, image: "🌴", rarity: "Estado" },
+      { id: "jalisco", name: "Jalisco", scientific: "Guadalajara", description: "Tierra del mariachi y el tequila, con hermosos valles.", unlocked: true, image: "🎸", rarity: "Estado" },
+      { id: "oaxaca", name: "Oaxaca", scientific: "Oaxaca de Juárez", description: "Corazón cultural y megadiverso con sierras y tradiciones únicas.", unlocked: false, image: "🏺", rarity: "Estado" },
     ]
   },
   {
@@ -164,15 +191,16 @@ const CATEGORIES_DATA = [
     textColor: "text-teal-700",
     progressBg: "bg-teal-600",
     items: [
-      { id: "ajolote", name: "Ajolote", scientific: "Ambystoma mexicanum", description: "Anfibio endémico de Xochimilco, maestro de la regeneración.", unlocked: true, image: "🦎" },
-      { id: "aguila", name: "Águila Real", scientific: "Aquila chrysaetos", description: "Símbolo patrio de México, habita en zonas montañosas.", unlocked: true, image: "🦅" },
-      { id: "monarca", name: "Mariposa Monarca", scientific: "Danaus plexippus", description: "Viaja miles de kilómetros cada año hasta los bosques de Michoacán.", unlocked: false, image: "🦋" },
-      { id: "jaguar", name: "Jaguar", scientific: "Panthera onca", description: "El felino más grande de América, sagrado para los mayas.", unlocked: false, image: "🐆" },
+      { id: "oso", name: "El Oso Negro", scientific: "Ursus americanus eremicus", description: "El oso negro es el carnívoro más grande de México. Es habitante de la Sierra del Carmen en Coahuila y es un símbolo emblemático de conservación en la región norte.", unlocked: false, image: "/sticker-oso-negro.png", rarity: "Raro", price: 150 },
+      { id: "ajolote", name: "Ajolote", scientific: "Ambystoma mexicanum", description: "Anfibio endémico de Xochimilco, maestro de la regeneración.", unlocked: true, image: "🦎", rarity: "Común" },
+      { id: "aguila", name: "Águila Real", scientific: "Aquila chrysaetos", description: "Símbolo patrio de México, habita en zonas montañosas.", unlocked: true, image: "🦅", rarity: "Común" },
+      { id: "monarca", name: "Mariposa Monarca", scientific: "Danaus plexippus", description: "Viaja miles de kilómetros cada año hasta los bosques de Michoacán.", unlocked: false, image: "🦋", rarity: "Común" },
+      { id: "jaguar", name: "Jaguar", scientific: "Panthera onca", description: "El felino más grande de América, sagrado para los mayas.", unlocked: false, image: "🐆", rarity: "Épico" },
     ]
   },
   {
     id: "flores",
-    title: "Flores",
+    title: "Flora",
     icon: Flower,
     iconBg: "bg-yellow-100",
     iconColor: "text-yellow-700",
@@ -182,10 +210,12 @@ const CATEGORIES_DATA = [
     textColor: "text-amber-800",
     progressBg: "bg-yellow-600",
     items: [
-      { id: "dalia", name: "Dalia", scientific: "Dahlia coccinea", description: "Flor nacional de México desde 1963, símbolo de la biodiversidad mexicana.", unlocked: true, image: "🌸" },
-      { id: "cempasuchil", name: "Cempasúchil", scientific: "Tagetes erecta", description: "La flor de los muertos, ilumina el camino de las almas en noviembre.", unlocked: true, image: "🌼" },
-      { id: "nochebuena", name: "Nochebuena", scientific: "Euphorbia pulcherrima", description: "Originaria de Guerrero, embellece la navidad en todo el mundo.", unlocked: true, image: "🌺" },
-      { id: "jacaranda", name: "Jacaranda", scientific: "Jacaranda mimosifolia", description: "Pinta de morado la CDMX cada primavera, símbolo de amistad internacional.", unlocked: false, image: "💜" },
+      { id: "gobernadora", name: "Gobernadora", scientific: "Larrea tridentata", description: "Arbusto perenne emblemático del desierto mexicano, conocido por su característico aroma a tierra mojada tras las lluvias y su resistencia legendaria.", unlocked: false, image: "/sticker-gobernadora.png", rarity: "Desértico", price: 100 },
+      { id: "tunas", name: "Tunas", scientific: "Opuntia ficus-indica", description: "Símbolo nacional de México, sus pencas y tunas dulces y jugosas maduran bajo el sol del desierto, siendo parte de nuestra bandera y base esencial de la gastronomía mexicana.", unlocked: false, image: "/sticker-tunas.png", rarity: "Común", price: 80 },
+      { id: "dalia", name: "Dalia", scientific: "Dahlia coccinea", description: "Flor nacional de México desde 1963, símbolo de la biodiversidad mexicana.", unlocked: true, image: "🌸", rarity: "Nacional" },
+      { id: "cempasuchil", name: "Cempasúchil", scientific: "Tagetes erecta", description: "La flor de los muertos, ilumina el camino de las almas en noviembre.", unlocked: true, image: "🌼", rarity: "Común" },
+      { id: "nochebuena", name: "Nochebuena", scientific: "Euphorbia pulcherrima", description: "Originaria de Guerrero, embellece la navidad en todo el mundo.", unlocked: true, image: "🌺", rarity: "Común" },
+      { id: "jacaranda", name: "Jacaranda", scientific: "Jacaranda mimosifolia", description: "Pinta de morado la CDMX cada primavera, símbolo de amistad internacional.", unlocked: false, image: "💜", rarity: "Común" },
     ]
   },
   {
@@ -200,23 +230,15 @@ const CATEGORIES_DATA = [
     textColor: "text-pink-600",
     progressBg: "bg-pink-600",
     items: [
-      { id: "pan_frances", name: "Pan Francés", scientific: "Comarca Lagunera", description: "El clásico pan crujiente y barato exclusivo de Torreón y la Laguna.", unlocked: true, image: "🍞" },
-      { id: "mole", name: "Mole Poblano", scientific: "Puebla", description: "Exquisita salsa tradicional hecha de chocolate, chiles y especias.", unlocked: true, image: "🍛" },
-      { id: "tacos", name: "Tacos al Pastor", scientific: "Ciudad de México", description: "Delicioso trompo de carne con adobo, piña, cebolla y cilantro.", unlocked: false, image: "🌮" },
-      { id: "cochinita", name: "Cochinita Pibil", scientific: "Yucatán", description: "Cerdo adobado en achiote cocido bajo tierra en hojas de plátano.", unlocked: false, image: "🥩" },
+      { id: "reliquia", name: "La Reliquia", scientific: "Comida Típica Lagunera", description: "La reliquia es una comida típica en la región lagunera, sobretodo, después de reuniones catolicas donde se benera y reza a imagenes de la religión, se les hace danzas y regalan la comida a las personas que fueron al \"Rosario\".", unlocked: false, image: "/sticker-reliquia.png", rarity: "Tradicional", price: 200 },
+      { id: "lonche", name: "Lonche", scientific: "Pan Francés Preparado", description: "El tradicional emparedado de pan francés lagunero, relleno de jamón, carnitas o aguacate, todo un clásico de la región.", unlocked: false, image: "/sticker-lonche.png", rarity: "Regional", price: 120 },
+      { id: "pan_frances", name: "Pan Francés", scientific: "Comarca Lagunera", description: "El clásico pan crujiente y barato exclusivo de Torreón y la Laguna.", unlocked: true, image: "🍞", rarity: "Común" },
+      { id: "mole", name: "Mole Poblano", scientific: "Puebla", description: "Exquisita salsa tradicional hecha de chocolate, chiles y especias.", unlocked: true, image: "🍛", rarity: "Común" },
+      { id: "tacos", name: "Tacos al Pastor", scientific: "Ciudad de México", description: "Delicioso trompo de carne con adobo, piña, cebolla y cilantro.", unlocked: false, image: "🌮", rarity: "Común" },
+      { id: "cochinita", name: "Cochinita Pibil", scientific: "Yucatán", description: "Cerdo adobado en achiote cocido bajo tierra en hojas de plátano.", unlocked: false, image: "🥩", rarity: "Común" },
     ]
   }
 ];
-
-export interface Sticker {
-  id: string;
-  name: string;
-  scientific: string;
-  description: string;
-  unlocked: boolean;
-  image: string;
-  rarity?: string;
-}
 
 export interface MexicanState {
   id: string;
@@ -428,6 +450,8 @@ function JugarPage() {
   const [activeTab, setActiveTab] = useState<"jugar" | "coleccion" | "tienda" | "perfil">("jugar");
   const [selectedState, setSelectedState] = useState(STATES_DATA[0]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categories, setCategories] = useState<Category[]>(CATEGORIES_DATA);
+  const [selectedShopCategory, setSelectedShopCategory] = useState<string | null>(null);
 
   const renderNavButton = (tab: "jugar" | "coleccion" | "tienda" | "perfil", Icon: any, label: string) => {
     const isActive = activeTab === tab;
@@ -436,6 +460,12 @@ function JugarPage() {
         onClick={() => {
           if (tab === "coleccion") {
             setSelectedCategory(null);
+          }
+          if (tab !== "tienda") {
+            setSelectedShopCategory(null);
+          }
+          if (tab !== "jugar") {
+            setIsGameActive(false);
           }
           setActiveTab(tab);
         }}
@@ -500,6 +530,93 @@ function JugarPage() {
   const [selectedOutfit, setSelectedOutfit] = useState<Outfit | null>(null);
   const [ropaViewOpen, setRopaViewOpen] = useState(false);
 
+  // User profile states
+  const [usernameState, setUsernameState] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("username");
+      return saved ? saved.replace(/@/g, "") : "explorador_botanico";
+    }
+    return "explorador_botanico";
+  });
+  const [avatarState, setAvatarState] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("avatar") || "";
+    }
+    return "";
+  });
+
+  // Edit profile states
+  const [profileEditOpen, setProfileEditOpen] = useState(false);
+  const [tempUsername, setTempUsername] = useState(usernameState);
+  const [tempAvatar, setTempAvatar] = useState(avatarState);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleOpenEditProfile = () => {
+    setTempUsername(usernameState);
+    setTempAvatar(avatarState);
+    setProfileEditOpen(true);
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("La imagen es demasiado grande", {
+          description: "Por favor selecciona una imagen menor a 2MB."
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setTempAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveProfile = () => {
+    const cleaned = tempUsername.replace(/@/g, "").trim();
+    if (!cleaned) {
+      toast.error("El nombre de explorador no puede estar vacío");
+      return;
+    }
+    setUsernameState(cleaned);
+    setAvatarState(tempAvatar);
+    localStorage.setItem("username", cleaned);
+    localStorage.setItem("avatar", tempAvatar);
+    setProfileEditOpen(false);
+  };
+
+  // Visual Novel gameplay states
+  const [isGameActive, setIsGameActive] = useState(false);
+  const [visualNovelStep, setVisualNovelStep] = useState(0);
+  const [guidebookOpen, setGuidebookOpen] = useState(false);
+
+  const visualNovelDialogue = [
+    "¡Hola explorador! Qué gusto tenerte en Coahuila. Te doy la bienvenida al majestuoso Museo Madero en San Pedro, Coahuila. 🌸",
+    "¿Sabías que el prócer Francisco I. Madero es de aquí de San Pedro y el Museo Madero está ubicado justamente en este lugar? 🍇",
+    "Aquí en el desierto, la vida florece con una fuerza increíble. Plantas como la Gobernadora y las Tunas son verdaderos tesoros de nuestra flora. 🌵",
+    "¡Toma una foto de este lugar presionando el botón de la cámara! Así la guardarás en tu dispositivo como recuerdo. 📸",
+    "Además, puedes abrir mi librito de viaje para consultar la información detallada de la flora, fauna y gastronomía del estado. 📖",
+    "¡Sigue explorando todo México para completar tu colección! ¡Buen viaje, explorador! 🎒"
+  ];
+
+  const handleDownloadBackground = () => {
+    const link = document.createElement("a");
+    link.href = "/museo-madero.jpg";
+    link.download = "museo-madero.jpg";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("¡Foto guardada!", {
+      description: "La imagen del Museo Madero se ha guardado en tu galería de descargas.",
+    });
+  };
 
   const appLink = "https://floresdemexico.app";
 
@@ -522,6 +639,8 @@ function JugarPage() {
   const handleStartGame = () => {
     if (energy > 0) {
       setEnergy((prev) => prev - 1);
+      setVisualNovelStep(0);
+      setIsGameActive(true);
       toast.success("¡Buen viaje!", {
         description: `Iniciando expedición en ${selectedState.name}...`,
       });
@@ -577,9 +696,88 @@ function JugarPage() {
       {/* Main Content Area based on Selected Tab */}
       <main className="w-full max-w-md flex-1 px-6 py-4">
         {activeTab === "jugar" && (
-          <div className="space-y-4 animate-fade-in-slide-up">
-            {/* Explora México Main Container */}
-            <div className="relative overflow-hidden rounded-3xl border-2 border-pink-100 bg-white shadow-md">
+          isGameActive ? (
+            /* Visual Novel Screen */
+            <div className="relative w-full h-[520px] rounded-3xl overflow-hidden border-2 border-pink-300 bg-[#f7f1ea] shadow-lg animate-fade-in">
+              {/* Blurred background image */}
+              <div 
+                className="absolute inset-0 bg-cover bg-center transition-all duration-500 scale-110 filter blur-[4px] opacity-90"
+                style={{ backgroundImage: `url('/museo-madero.jpg')` }}
+              />
+              <div className="absolute inset-0 bg-black/15 z-0" />
+
+              {/* Back Button */}
+              <button
+                onClick={() => setIsGameActive(false)}
+                aria-label="Volver al mapa"
+                className="absolute top-4 left-4 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-pink-700 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+              >
+                <ChevronLeft className="h-5 w-5 stroke-[3]" />
+              </button>
+
+              {/* Character Coahuila */}
+              <img
+                src="/coahuila-default.png"
+                alt="Coahuila"
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[82%] object-contain select-none z-10 pointer-events-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.2)] animate-fade-in-slide-up"
+              />
+
+              {/* Floating Action Buttons: Camera and Book */}
+              <div className="absolute right-4 bottom-28 z-20 flex flex-col gap-3">
+                {/* Book / Diary Button */}
+                <button
+                  onClick={() => setGuidebookOpen(true)}
+                  aria-label="Diario de viaje de Coahuila"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fdfaf6] border-2 border-pink-200 shadow-lg text-pink-600 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                >
+                  <BookOpen className="h-5.5 w-5.5" />
+                </button>
+
+                {/* Camera / Save photo Button */}
+                <button
+                  onClick={handleDownloadBackground}
+                  aria-label="Guardar foto de fondo"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fdfaf6] border-2 border-pink-200 shadow-lg text-pink-600 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+                >
+                  <Camera className="h-5.5 w-5.5" />
+                </button>
+              </div>
+
+              {/* Dialogue Box */}
+              <div 
+                onClick={() => {
+                  if (visualNovelStep < visualNovelDialogue.length - 1) {
+                    setVisualNovelStep(prev => prev + 1);
+                  } else {
+                    setVisualNovelStep(0);
+                    setIsGameActive(false);
+                    toast.success("¡Expedición en Coahuila completada!", {
+                      description: "Has aprendido valiosos datos culturales. ¡Obtienes +100 monedas!",
+                    });
+                    setCoins(prev => prev + 100);
+                  }
+                }}
+                className="absolute bottom-4 left-4 right-4 z-20 p-4 rounded-2xl bg-[#f7f1ea]/95 border-2 border-pink-300 shadow-md cursor-pointer select-none transition-all hover:bg-[#f7f1ea]"
+              >
+                {/* Speaker Tag */}
+                <span className="absolute -top-3 left-4 rounded-full bg-pink-700 px-3 py-0.5 text-[9px] font-black text-white uppercase tracking-wider shadow-sm">
+                  Coahuila
+                </span>
+
+                <p className="text-xs md:text-sm font-extrabold text-gray-800 leading-relaxed min-h-[50px] flex items-center pr-4">
+                  "{visualNovelDialogue[visualNovelStep]}"
+                </p>
+
+                {/* Continue indicator */}
+                <div className="absolute right-3 bottom-2.5 animate-bounce">
+                  <span className="text-[10px] text-pink-600 font-black">▶</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-4 animate-fade-in-slide-up">
+              {/* Explora México Main Container */}
+              <div className="relative overflow-hidden rounded-3xl border-2 border-pink-100 bg-white shadow-md">
               {/* Colorful Top Border Bar */}
               <div className="flex h-1.5 w-full">
                 <div className="flex-1 bg-pink-500" />
@@ -741,7 +939,8 @@ function JugarPage() {
               </button>
             </div>
           </div>
-        )}
+        )
+      )}
 
         {/* Colección Tab View */}
         {activeTab === "coleccion" && (
@@ -767,8 +966,19 @@ function JugarPage() {
 
                 {/* Category Cards List */}
                 <div className="space-y-4">
-                  {CATEGORIES_DATA.map((cat) => {
+                  {categories.map((cat) => {
                     const IconComponent = cat.icon;
+                    const unlockedCount = cat.items.filter((i) => i.unlocked).length;
+                    const totalCount = cat.items.length;
+                    const displayBadge =
+                      cat.id === "estados" ? cat.badge : `${unlockedCount} / ${totalCount}`;
+                    const displayPercent =
+                      cat.id === "estados"
+                        ? cat.percent
+                        : totalCount > 0
+                          ? (unlockedCount / totalCount) * 100
+                          : 0;
+
                     return (
                       <button
                         key={cat.id}
@@ -781,7 +991,7 @@ function JugarPage() {
                             <IconComponent className="h-5 w-5 stroke-[2.5]" />
                           </div>
                           <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-extrabold text-gray-500">
-                            {cat.badge}
+                            {displayBadge}
                           </span>
                         </div>
 
@@ -793,7 +1003,7 @@ function JugarPage() {
                           {/* Progress track */}
                           <div className="h-2.5 w-full rounded-full bg-gray-100 overflow-hidden">
                             <div
-                              style={{ width: `${cat.percent}%` }}
+                              style={{ width: `${displayPercent}%` }}
                               className={`h-full rounded-full ${cat.progressBg}`}
                             />
                           </div>
@@ -817,7 +1027,7 @@ function JugarPage() {
                   <div className="mt-3">
                     <button
                       onClick={() => {
-                        const daliaSticker = CATEGORIES_DATA.find(c => c.id === "flores")?.items.find(i => i.id === "dalia");
+                        const daliaSticker = categories.find(c => c.id === "flores")?.items.find(i => i.id === "dalia");
                         if (daliaSticker) {
                           setSelectedSticker({
                             id: daliaSticker.id,
@@ -1048,131 +1258,163 @@ function JugarPage() {
                 </div>
               )
             ) : (
-              /* 3. Fauna/Flores/Comidas Sticker Albums */
-              <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm space-y-4 animate-fade-in-slide-up">
-                {/* Top Header */}
-                <div className="flex items-center justify-between pb-2 border-b border-pink-50">
-                  <button
-                    onClick={() => setSelectedCategory(null)}
-                    className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
-                  >
-                    <ChevronLeft className="h-4 w-4" /> Volver
-                  </button>
-                  <h3 className="text-base font-extrabold text-gray-800">
-                    {selectedCategory === "fauna" ? "Fauna" : selectedCategory === "flores" ? "Flores" : "Comidas"}
-                  </h3>
-                  <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
-                    <span className="text-[10px]">⭐</span> 1 / 6
-                  </div>
-                </div>
+              /* 3. Fauna/Flora/Comidas Sticker Albums */
+              (() => {
+                const currentCat = categories.find((c) => c.id === selectedCategory);
+                if (!currentCat) return null;
 
-                {/* Album Header Card */}
-                <div className="relative overflow-hidden rounded-2xl border-2 border-pink-100 bg-[#fdfaf6] p-4 shadow-inner">
-                  <div className="flex h-1.5 w-full absolute top-0 inset-x-0">
-                    <div className="flex-1 bg-pink-500" />
-                    <div className="flex-1 bg-teal-400" />
-                    <div className="flex-1 bg-yellow-400" />
-                    <div className="flex-1 bg-emerald-400" />
-                  </div>
-                  <h4 className="text-lg font-bold text-teal-800 mt-1">
-                    {selectedCategory === "fauna" ? "Fauna del Desierto" : selectedCategory === "flores" ? "Flores Silvestres" : "Comidas Típicas"}
-                  </h4>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {selectedCategory === "fauna"
-                      ? "Colecciona las especies más icónicas del Gran Ecosistema Coahuilense."
-                      : selectedCategory === "flores"
-                      ? "Descubre la flora nacional de México y de sus distintos ecosistemas."
-                      : "Explora la gastronomía regional y los sabores emblemáticos de cada estado."
-                    }
-                  </p>
-                  {/* Progress bar */}
-                  <div className="mt-3 space-y-1">
-                    <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                      <div className="h-full w-[16.6%] bg-pink-600 rounded-full" />
+                const unlockedCount = currentCat.items.filter((i) => i.unlocked).length;
+                const totalCount = currentCat.items.length;
+                const progressPercent = totalCount > 0 ? (unlockedCount / totalCount) * 100 : 0;
+
+                return (
+                  <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm space-y-4 animate-fade-in-slide-up">
+                    {/* Top Header */}
+                    <div className="flex items-center justify-between pb-2 border-b border-pink-50">
+                      <button
+                        onClick={() => setSelectedCategory(null)}
+                        className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
+                      >
+                        <ChevronLeft className="h-4 w-4" /> Volver
+                      </button>
+                      <h3 className="text-base font-extrabold text-gray-800">
+                        {currentCat.title}
+                      </h3>
+                      <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
+                        <span className="text-[10px]">⭐</span> {unlockedCount} / {totalCount}
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                {/* Stickers Grid */}
-                <div className="grid grid-cols-2 gap-3.5 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
-                  {/* Card 01: Unlocked */}
-                  <button
-                    onClick={() => {
-                      setSelectedSticker({
-                        id: "01",
-                        name: selectedCategory === "fauna" ? "El Guajolote" : selectedCategory === "flores" ? "Dalia" : "Pan Francés",
-                        scientific: selectedCategory === "fauna" ? "Guajolote Norteño" : selectedCategory === "flores" ? "Dahlia coccinea" : "Comarca Lagunera",
-                        description: selectedCategory === "fauna"
-                          ? "Especie majestuosa de la Sierra Madre del Desierto Coahuilense. Un animal de gran importancia ecológica."
+                    {/* Album Header Card */}
+                    <div className="relative overflow-hidden rounded-2xl border-2 border-pink-100 bg-[#fdfaf6] p-4 shadow-inner">
+                      <div className="flex h-1.5 w-full absolute top-0 inset-x-0">
+                        <div className="flex-1 bg-pink-500" />
+                        <div className="flex-1 bg-teal-400" />
+                        <div className="flex-1 bg-yellow-400" />
+                        <div className="flex-1 bg-emerald-400" />
+                      </div>
+                      <h4 className="text-lg font-bold text-teal-800 mt-1">
+                        {selectedCategory === "fauna"
+                          ? "Fauna de la Sierra y Desierto"
                           : selectedCategory === "flores"
-                          ? "Flor nacional de México desde 1963, famosa por sus pétalos y colores vibrantes."
-                          : "Delicioso pan tradicional y crujiente de la Laguna, ideal para comer con guisados.",
-                        unlocked: true,
-                        image: selectedCategory === "fauna" ? "/el-guajolote.png?v=2026" : selectedCategory === "flores" ? "🌸" : "🍞",
-                        rarity: "Común"
-                      });
-                    }}
-                    className="flex flex-col items-center bg-white border border-pink-200 rounded-2xl p-2 relative shadow-sm hover:scale-[1.03] transition-all"
-                  >
-                    <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-black text-white bg-[#d80073]">
-                      01
-                    </div>
-                    <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
-                      {selectedCategory === "fauna" ? (
-                        <img src="/el-guajolote.png?v=2026" className="w-full h-full object-contain hover:scale-105 transition-transform" />
-                      ) : (
-                        <span className="text-4xl">{selectedCategory === "flores" ? "🌸" : "🍞"}</span>
-                      )}
-                    </div>
-                    <span className="text-[11px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
-                      {selectedCategory === "fauna" ? "El Guajolote" : selectedCategory === "flores" ? "Dalia" : "Pan Francés"}
-                    </span>
-                  </button>
-
-                  {/* Cards 02 to 06: Locked, blank albums with a lock icon */}
-                  {[2, 3, 4, 5, 6].map((num) => (
-                    <div
-                      key={num}
-                      className="flex flex-col items-center justify-center bg-white border border-gray-255 rounded-2xl p-2.5 aspect-square relative shadow-xs"
-                    >
-                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-gray-400 bg-gray-50 border border-gray-100">
-                        0{num}
-                      </div>
-                      
-                      {/* Blank slot with lock icon */}
-                      <div className="flex flex-col items-center justify-center gap-1.5 mt-2">
-                        <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 border border-gray-100/80 text-gray-300">
-                          <Lock className="h-4 w-4 text-gray-300" />
+                          ? "Flora y Cactáceas"
+                          : "Gastronomía Mexicana"}
+                      </h4>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {selectedCategory === "fauna"
+                          ? "Colecciona las especies más icónicas del gran ecosistema nacional y del desierto coahuilense."
+                          : selectedCategory === "flores"
+                          ? "Descubre la flora nacional de México y de sus desiertos y valles templados."
+                          : "Explora la gastronomía regional y los sabores emblemáticos de cada estado de la república."}
+                      </p>
+                      {/* Progress bar */}
+                      <div className="mt-3 space-y-1">
+                        <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
+                          <div
+                            style={{ width: `${progressPercent}%` }}
+                            className="h-full bg-pink-600 rounded-full transition-all duration-300"
+                          />
                         </div>
-                        <span className="text-[9px] font-black text-gray-400 tracking-wider">
-                          BLOQUEADO
-                        </span>
                       </div>
                     </div>
-                  ))}
-                </div>
 
-                {/* Siguiente página button */}
-                <button
-                  onClick={() => toast.info("No hay más páginas", { description: "¡Completa más álbumes para desbloquear la siguiente página!" })}
-                  className="flex w-full items-center justify-center gap-1.5 rounded-full bg-teal-700 py-2.5 text-xs font-black text-white transition hover:bg-teal-800"
-                >
-                  Siguiente página →
-                </button>
+                    {/* Stickers Grid */}
+                    <div className="grid grid-cols-2 gap-3.5 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
+                      {currentCat.items.map((item, index) => {
+                        const isImageFile =
+                          item.image.startsWith("/") || item.image.endsWith(".png");
+                        const displayIndex = String(index + 1).padStart(2, "0");
 
-                {/* Tips yellow card */}
-                <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100 flex items-start gap-2.5">
-                  <span className="text-xl">💡</span>
-                  <p className="text-[11px] font-semibold text-amber-800 leading-normal">
-                    {selectedCategory === "fauna"
-                      ? "¡Sigue explorando los Parques Nacionales para encontrar más sobres!"
-                      : selectedCategory === "flores"
-                      ? "¡Busca en los bosques y valles templados para recolectar más flores silvestres!"
-                      : "¡Sigue recorriendo los mercados locales para descubrir más platillos típicos!"
-                    }
-                  </p>
-                </div>
-              </div>
+                        if (item.unlocked) {
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                setSelectedSticker({
+                                  id: item.id,
+                                  name: item.name,
+                                  scientific: item.scientific,
+                                  description: item.description,
+                                  unlocked: true,
+                                  image: item.image,
+                                  rarity: item.rarity || "Común"
+                                });
+                              }}
+                              className="flex flex-col items-center bg-white border border-pink-200 rounded-2xl p-2 relative shadow-sm hover:scale-[1.03] active:scale-95 transition-all"
+                            >
+                              <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-black text-white bg-[#d80073]">
+                                {displayIndex}
+                              </div>
+                              <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
+                                {isImageFile ? (
+                                  <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="w-full h-full object-contain hover:scale-105 transition-transform"
+                                  />
+                                ) : (
+                                  <span className="text-4xl filter drop-shadow-sm">
+                                    {item.image}
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-[11px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                                {item.name}
+                              </span>
+                            </button>
+                          );
+                        } else {
+                          return (
+                            <div
+                              key={item.id}
+                              className="flex flex-col items-center justify-center bg-white border border-gray-200 rounded-2xl p-2.5 aspect-square relative shadow-xs"
+                            >
+                              <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-gray-400 bg-gray-50 border border-gray-100">
+                                {displayIndex}
+                              </div>
+
+                              {/* Blank slot with lock icon */}
+                              <div className="flex flex-col items-center justify-center gap-1.5 mt-2">
+                                <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 border border-gray-100/80 text-gray-300">
+                                  <Lock className="h-4 w-4 text-gray-300" />
+                                </div>
+                                <span className="text-[9px] font-black text-gray-400 tracking-wider">
+                                  BLOQUEADO
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        }
+                      })}
+                    </div>
+
+                    {/* Siguiente página button */}
+                    <button
+                      onClick={() =>
+                        toast.info("No hay más páginas", {
+                          description:
+                            "¡Completa más álbumes para desbloquear la siguiente página!",
+                        })
+                      }
+                      className="flex w-full items-center justify-center gap-1.5 rounded-full bg-teal-700 py-2.5 text-xs font-black text-white transition hover:bg-teal-800"
+                    >
+                      Siguiente página →
+                    </button>
+
+                    {/* Tips yellow card */}
+                    <div className="rounded-2xl bg-amber-50 p-4 border border-amber-100 flex items-start gap-2.5">
+                      <span className="text-xl">💡</span>
+                      <p className="text-[11px] font-semibold text-amber-800 leading-normal">
+                        {selectedCategory === "fauna"
+                          ? "¡Sigue explorando los Parques Nacionales y la Sierra del Carmen para encontrar más sobres de fauna!"
+                          : selectedCategory === "flores"
+                            ? "¡Busca en los desiertos y valles de Coahuila para recolectar más especies de flora!"
+                            : "¡Sigue recorriendo los mercados locales y festividades de la Comarca Lagunera para descubrir más platillos!"}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })()
             )}
           </div>
         )}
@@ -1181,8 +1423,135 @@ function JugarPage() {
         {activeTab === "tienda" && (
           <div className="animate-fade-in-slide-up pb-2">
 
-            {/* ── Vista: Ver Todo Ropa ── */}
-            {ropaViewOpen ? (
+            {/* ── Vista: Comprar Stickers por Categoría ── */}
+            {selectedShopCategory !== null ? (
+              (() => {
+                const currentCat = categories.find((c) => c.id === selectedShopCategory);
+                if (!currentCat) return null;
+
+                // Filtrar stickers que tengan precio
+                const stickersForSale = currentCat.items.filter((item) => item.price !== undefined);
+
+                return (
+                  <div className="space-y-4">
+                    {/* Header */}
+                    <div className="flex items-center justify-between">
+                      <button
+                        onClick={() => setSelectedShopCategory(null)}
+                        className="flex items-center gap-1 text-xs font-bold text-pink-700 hover:underline"
+                      >
+                        <ChevronLeft className="h-4 w-4" /> Volver a Tienda
+                      </button>
+                      <h3 className="text-base font-extrabold text-gray-800">
+                        Stickers de {currentCat.title}
+                      </h3>
+                      <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
+                        <span className="text-[10px]">🏷️</span> {stickersForSale.length} en venta
+                      </div>
+                    </div>
+
+                    {/* Stickers Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {stickersForSale.map((item) => {
+                        const isImageFile =
+                          item.image.startsWith("/") || item.image.endsWith(".png");
+
+                        return (
+                          <div
+                            key={item.id}
+                            onClick={() => {
+                              setSelectedSticker({
+                                id: item.id,
+                                name: item.name,
+                                scientific: item.scientific,
+                                description: item.description,
+                                unlocked: true, // Habilitar vista completa de detalles
+                                image: item.image,
+                                rarity: item.rarity || "Común"
+                              });
+                            }}
+                            className="flex flex-col rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden text-left cursor-pointer hover:scale-[1.01] hover:shadow-md active:scale-95 transition-all"
+                          >
+                            <div className="relative bg-[#f5f5f0] flex items-center justify-center h-40 overflow-hidden p-2">
+                              <span className="absolute top-2 right-2 rounded-full bg-pink-100 px-2 py-0.5 text-[9px] font-black text-pink-700">
+                                {item.rarity || "Común"}
+                              </span>
+                              {isImageFile ? (
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="h-32 object-contain drop-shadow-md"
+                                />
+                              ) : (
+                                <span className="text-5xl filter drop-shadow-md">
+                                  {item.image}
+                                </span>
+                              )}
+                            </div>
+                            <div className="p-3 flex-1 flex flex-col justify-between">
+                              <div className="mb-2">
+                                <p className="text-xs font-bold text-gray-800 leading-tight mb-0.5">
+                                  {item.name}
+                                </p>
+                                <p className="text-[9px] italic text-gray-400 font-semibold mb-1">
+                                  {item.scientific}
+                                </p>
+                                <p className="text-[10px] text-gray-500 font-medium leading-relaxed line-clamp-2">
+                                  {item.description}
+                                </p>
+                              </div>
+                              <div className="flex items-center justify-between mt-auto pt-2 border-t border-gray-50">
+                                <span className="text-xs font-black text-pink-600">
+                                  {item.price} MXN
+                                </span>
+                                {item.unlocked ? (
+                                  <span className="rounded-full bg-emerald-50 border border-emerald-250 px-2 py-1 text-[9px] font-bold text-emerald-600">
+                                    Comprado ⚡
+                                  </span>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (coins >= (item.price || 0)) {
+                                        setCoins((prev) => prev - (item.price || 0));
+                                        setCategories((prevCategories) =>
+                                          prevCategories.map((c) => {
+                                            if (c.id === selectedShopCategory) {
+                                              return {
+                                                ...c,
+                                                items: c.items.map((i) =>
+                                                  i.id === item.id ? { ...i, unlocked: true } : i
+                                                ),
+                                              };
+                                            }
+                                            return c;
+                                          })
+                                        );
+                                        toast.success(`¡Compraste ${item.name}!`, {
+                                          description: `Se han deducido ${item.price} MXN de tu saldo. Ya puedes ver el sticker en tu colección.`,
+                                        });
+                                      } else {
+                                        toast.error("Saldo insuficiente", {
+                                          description:
+                                            "No tienes suficientes monedas MXN para comprar este sticker.",
+                                        });
+                                      }
+                                    }}
+                                    className="rounded-full bg-pink-600 hover:bg-pink-700 text-white text-[10px] font-black px-2.5 py-1 transition active:scale-95 cursor-pointer"
+                                  >
+                                    Comprar
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()
+            ) : ropaViewOpen ? (
               <div className="space-y-4">
                 {/* Header con botón Volver */}
                 <div className="flex items-center justify-between">
@@ -1311,7 +1680,7 @@ function JugarPage() {
                 {/* Flora card */}
                 <div className="relative rounded-2xl overflow-hidden h-28 shadow-sm cursor-pointer group"
                   style={{ background: "linear-gradient(135deg, #6b3e26 0%, #a0522d 50%, #8b6914 100%)" }}
-                  onClick={() => { setActiveTab("coleccion"); setSelectedCategory("flores"); }}
+                  onClick={() => setSelectedShopCategory("flores")}
                 >
                   <div className="absolute inset-0 flex flex-col justify-end p-3">
                     <div className="text-3xl mb-1 opacity-70 group-hover:opacity-100 transition">🌸</div>
@@ -1323,7 +1692,7 @@ function JugarPage() {
                 {/* Fauna card */}
                 <div className="relative rounded-2xl overflow-hidden h-28 shadow-sm cursor-pointer group"
                   style={{ background: "linear-gradient(135deg, #1a5c4f 0%, #2d8a6e 50%, #1e6e5e 100%)" }}
-                  onClick={() => { setActiveTab("coleccion"); setSelectedCategory("fauna"); }}
+                  onClick={() => setSelectedShopCategory("fauna")}
                 >
                   <div className="absolute inset-0 flex flex-col justify-end p-3">
                     <div className="text-3xl mb-1 opacity-70 group-hover:opacity-100 transition">🦋</div>
@@ -1335,7 +1704,7 @@ function JugarPage() {
                 {/* Comida — wide card */}
                 <div className="relative col-span-2 rounded-2xl overflow-hidden h-20 shadow-sm cursor-pointer group"
                   style={{ background: "linear-gradient(135deg, #c8a200 0%, #e6bb00 50%, #b89500 100%)" }}
-                  onClick={() => { setActiveTab("coleccion"); setSelectedCategory("comidas"); }}
+                  onClick={() => setSelectedShopCategory("comidas")}
                 >
                   <div className="absolute inset-0 flex items-center justify-between px-5">
                     <div>
@@ -1401,15 +1770,33 @@ function JugarPage() {
         {activeTab === "perfil" && (
           <div className="space-y-4 animate-fade-in-slide-up">
             <div className="rounded-3xl border-2 border-pink-100 bg-white p-5 shadow-sm text-center">
-              <div className="relative mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-pink-100 border-4 border-pink-200">
-                <User className="h-10 w-10 text-pink-600" />
-                <span className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-teal-500 text-[10px] font-black text-white border-2 border-white">
-                  Lvl 4
-                </span>
+              {/* Header profile row */}
+              <div className="flex items-center justify-center gap-4 mb-4 text-left">
+                {/* Avatar */}
+                <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-full bg-pink-100 border-4 border-pink-200 shadow-inner overflow-hidden">
+                  {avatarState ? (
+                    <img
+                      src={avatarState}
+                      alt={usernameState}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <User className="h-10 w-10 text-pink-600" />
+                  )}
+                </div>
+                {/* Name and Level */}
+                <div className="flex flex-col items-start gap-1">
+                  <span className="rounded-full bg-teal-500 text-[10px] font-black text-white px-2.5 py-0.5 shadow-sm uppercase tracking-wide">
+                    NIVEL 4
+                  </span>
+                  <h2 className="text-base font-extrabold text-gray-800 leading-tight">
+                    {usernameState}
+                  </h2>
+                  <p className="text-xs text-teal-600 font-extrabold uppercase tracking-wide">
+                    Explorador Regional
+                  </p>
+                </div>
               </div>
-
-              <h2 className="text-base font-bold text-gray-800">Explorador Botánico</h2>
-              <p className="text-xs text-teal-600 font-extrabold uppercase">Guardabosques Novel</p>
 
               {/* Progress bar */}
               <div className="mt-4 space-y-1">
@@ -1433,7 +1820,7 @@ function JugarPage() {
                 <div className="text-center">
                   <div className="text-lg font-black text-teal-600">12</div>
                   <div className="text-[9px] font-black tracking-wider text-gray-400 uppercase">
-                    FLORES
+                    NIVELES COMPLETADOS
                   </div>
                 </div>
                 <div className="text-center">
@@ -1444,13 +1831,35 @@ function JugarPage() {
                 </div>
               </div>
 
+              {/* Diario de Viaje Card */}
+              <div className="relative mt-5 flex items-center gap-4 rounded-3xl border border-[#e9dfd3] bg-[#fdf8f2] p-4 text-left shadow-sm overflow-hidden border-l-[6px] border-l-[#c4a000]">
+                {/* Book Icon Box */}
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[#c4a000] text-white">
+                  <BookOpen className="h-6 w-6 stroke-[2]" />
+                </div>
+                {/* Text Content */}
+                <div className="flex-1 min-w-0 z-10">
+                  <h3 className="text-base font-extrabold text-[#2b251e] leading-tight">
+                    Diario de Viaje
+                  </h3>
+                  <p className="text-[11px] text-gray-500 font-semibold mt-1">
+                    Última parada:{" "}
+                    <span className="font-extrabold text-[#705800]">
+                      Saltillo, Coahuila
+                    </span>
+                  </p>
+                </div>
+                {/* Subtle Bookmark SVG Icon on top-right */}
+                <div className="absolute top-0 right-4 h-12 w-8 opacity-10 text-[#2b251e] z-0">
+                  <svg viewBox="0 0 24 30" className="h-full w-full fill-current">
+                    <path d="M 0,0 L 24,0 L 24,30 L 12,22 L 0,30 Z" />
+                  </svg>
+                </div>
+              </div>
+
               <div className="mt-5 space-y-2">
                 <button
-                  onClick={() =>
-                    toast.info("Configuraciones de cuenta", {
-                      description: "Esta función de sincronización está en mantenimiento.",
-                    })
-                  }
+                  onClick={handleOpenEditProfile}
                   className="w-full rounded-full border border-pink-200 bg-white py-2 text-xs font-bold text-pink-700 transition hover:bg-pink-50"
                 >
                   Editar avatar y nombre
@@ -1802,6 +2211,136 @@ function JugarPage() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Profile Edit Dialog */}
+      <Dialog open={profileEditOpen} onOpenChange={setProfileEditOpen}>
+        <DialogContent className="rounded-3xl border-2 border-pink-300 bg-[#f7f1ea] max-w-[90%] md:max-w-md p-6">
+          <DialogHeader>
+            <DialogTitle className="text-pink-700 font-extrabold text-xl text-center">
+              Editar Perfil
+            </DialogTitle>
+            <DialogDescription className="text-center text-xs text-gray-500">
+              Modifica tu nombre de explorador y foto de perfil
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-3 flex flex-col items-center">
+            {/* Avatar upload/preview */}
+            <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-pink-100 border-4 border-pink-200 shadow-inner overflow-hidden relative">
+                {tempAvatar ? (
+                  <img src={tempAvatar} alt="Vista previa del avatar" className="h-full w-full object-cover" />
+                ) : (
+                  <User className="h-12 w-12 text-pink-600" />
+                )}
+                {/* Overlay hover effect */}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="text-[10px] font-black text-white uppercase tracking-wider text-center px-1">
+                    Cambiar foto
+                  </span>
+                </div>
+              </div>
+              
+              {/* Hidden file input */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+            </div>
+            
+            {/* Username Input */}
+            <div className="w-full space-y-2">
+              <Label htmlFor="edit-username" className="text-xs font-bold text-gray-700 tracking-wider">
+                NOMBRE DE EXPLORADOR
+              </Label>
+              <div className="flex items-center gap-2 rounded-2xl border-2 border-teal-300 bg-white px-4 py-2.5 shadow-inner">
+                <input
+                  id="edit-username"
+                  type="text"
+                  value={tempUsername}
+                  onChange={(e) => setTempUsername(e.target.value.replace(/@/g, ""))}
+                  placeholder="Escribe tu username"
+                  className="w-full bg-transparent text-sm font-semibold outline-none text-gray-800"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <button
+              onClick={() => setProfileEditOpen(false)}
+              className="rounded-full border-2 border-pink-200 bg-white py-3 font-bold text-pink-700 transition hover:bg-pink-50 text-xs tracking-wider"
+            >
+              CANCELAR
+            </button>
+            <button
+              onClick={handleSaveProfile}
+              className="rounded-full bg-pink-700 py-3 font-bold text-white shadow-md transition hover:bg-pink-800 text-xs tracking-wider"
+            >
+              GUARDAR
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Guidebook Dialog (Diario de Viaje) */}
+      <Dialog open={guidebookOpen} onOpenChange={setGuidebookOpen}>
+        <DialogContent className="rounded-3xl border-2 border-pink-300 bg-[#f7f1ea] max-w-[90%] md:max-w-md p-6">
+          <DialogHeader>
+            <DialogTitle className="text-pink-700 font-extrabold text-xl text-center flex items-center justify-center gap-2">
+              <BookOpen className="h-6 w-6 text-pink-700" /> Diario de Viaje
+            </DialogTitle>
+            <DialogDescription className="text-center text-xs text-gray-500 uppercase tracking-widest font-black">
+              Coahuila de Zaragoza 🇲🇽
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-3 text-xs md:text-sm text-gray-700 font-semibold leading-relaxed">
+            {/* Location Section */}
+            <div className="rounded-2xl bg-white p-3.5 border border-pink-100 shadow-sm space-y-1">
+              <h4 className="text-[10px] font-black text-pink-600 uppercase tracking-wider">UBICACIÓN DESTACADA</h4>
+              <p className="font-extrabold text-gray-800 text-sm">Museo Madero, San Pedro, Coahuila</p>
+              <p className="text-gray-500">La casa donde Francisco I. Madero vivió en su adultez y escribió su célebre libro "La Sucesión Presidencial". Este histórico edificio aún conserva en su fachada izquierda un daño provocado por una bala de cañón, siendo San Pedro la cuna y origen de la Revolución Mexicana.</p>
+            </div>
+
+            {/* Biodiversity Section */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-2xl bg-white p-3.5 border border-pink-100 shadow-sm space-y-1">
+                <h4 className="text-[10px] font-black text-teal-600 uppercase tracking-wider">FLORA TÍPICA</h4>
+                <ul className="list-disc pl-3.5 space-y-0.5 text-gray-600 font-bold">
+                  <li>Cactáceas 🌵</li>
+                  <li>Gobernadora 🌿</li>
+                  <li>Candelilla 🌱</li>
+                </ul>
+              </div>
+              <div className="rounded-2xl bg-white p-3.5 border border-pink-100 shadow-sm space-y-1">
+                <h4 className="text-[10px] font-black text-amber-600 uppercase tracking-wider">FAUNA EMBLEMÁTICA</h4>
+                <ul className="list-disc pl-3.5 space-y-0.5 text-gray-600 font-bold">
+                  <li>Oso Negro 🐻</li>
+                  <li>Águila Real 🦅</li>
+                  <li>Lagartija de Arena 🦎</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Culture & Gastronomy Section */}
+            <div className="rounded-2xl bg-white p-3.5 border border-pink-100 shadow-sm space-y-1">
+              <h4 className="text-[10px] font-black text-purple-600 uppercase tracking-wider">GASTRONOMÍA Y CULTURA</h4>
+              <p className="text-gray-600 font-bold">Famoso por su delicioso <span className="text-pink-600">Pan Francés lagunero</span>, los guisados de <span className="text-teal-600">La Reliquia</span>, y la vitivinicultura histórica en Parras, la primera bodega de vino de toda América.</p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setGuidebookOpen(false)}
+            className="w-full mt-2 rounded-full bg-pink-700 py-3 font-bold text-white shadow-md transition hover:bg-pink-800 text-xs tracking-wider"
+          >
+            ENTENDIDO
+          </button>
         </DialogContent>
       </Dialog>
     </div>
