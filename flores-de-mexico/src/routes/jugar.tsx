@@ -448,7 +448,7 @@ function JugarPage() {
 
 
   const navigate = useNavigate();
-  const { musicEnabled, setMusicEnabled } = useGameAudio();
+  const { musicEnabled, setMusicEnabled, sfxEnabled, setSfxEnabled, playSfx } = useGameAudio();
   const [activeTab, setActiveTab] = useState<"jugar" | "coleccion" | "tienda" | "perfil">("jugar");
   const [selectedState, setSelectedState] = useState(STATES_DATA[0]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -514,7 +514,6 @@ function JugarPage() {
   // Settings Dialog State
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [textSpeed, setTextSpeed] = useState("Normal");
-  const [sfxOn, setSfxOn] = useState(true);
 
   // Tutorial Dialog State
   const [tutorialOpen, setTutorialOpen] = useState(false);
@@ -597,6 +596,8 @@ function JugarPage() {
   const [isGameActive, setIsGameActive] = useState(false);
   const [visualNovelStep, setVisualNovelStep] = useState(0);
   const [guidebookOpen, setGuidebookOpen] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
 
   const visualNovelDialogue = [
     "¡Hola explorador! Qué gusto tenerte en Coahuila. Te doy la bienvenida al majestuoso Museo Madero en San Pedro, Coahuila. 🌸",
@@ -606,6 +607,45 @@ function JugarPage() {
     "Además, puedes abrir mi librito de viaje para consultar la información detallada de la flora, fauna y gastronomía del estado. 📖",
     "¡Sigue explorando todo México para completar tu colección! ¡Buen viaje, explorador! 🎒"
   ];
+
+  // Typewriter effect logic
+  useEffect(() => {
+    if (!isGameActive) {
+      setTypedText("");
+      setIsTyping(false);
+      return;
+    }
+
+    const dialogue = visualNovelDialogue[visualNovelStep] || "";
+    setTypedText("");
+    setIsTyping(true);
+
+    let currentIndex = 0;
+    let delay = 30; // Normal
+    if (textSpeed === "Lento") delay = 60;
+    if (textSpeed === "Rápido") delay = 12;
+
+    const intervalId = setInterval(() => {
+      if (currentIndex < dialogue.length) {
+        const nextChar = dialogue[currentIndex];
+        setTypedText((prev) => prev + nextChar);
+
+        // Play text typing SFX (only for non-whitespace characters)
+        if (nextChar.trim()) {
+          playSfx("text");
+        }
+
+        currentIndex++;
+      } else {
+        setIsTyping(false);
+        clearInterval(intervalId);
+      }
+    }, delay);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [visualNovelStep, isGameActive, textSpeed, playSfx]);
 
   const handleDownloadBackground = () => {
     const link = document.createElement("a");
@@ -749,17 +789,24 @@ function JugarPage() {
               {/* Dialogue Box */}
               <div 
                 onClick={() => {
-                  if (visualNovelStep < visualNovelDialogue.length - 1) {
-                    setVisualNovelStep(prev => prev + 1);
+                  playSfx("little");
+                  if (isTyping) {
+                    setTypedText(visualNovelDialogue[visualNovelStep]);
+                    setIsTyping(false);
                   } else {
-                    setVisualNovelStep(0);
-                    setIsGameActive(false);
-                    toast.success("¡Expedición en Coahuila completada!", {
-                      description: "Has aprendido valiosos datos culturales. ¡Obtienes +100 monedas!",
-                    });
-                    setCoins(prev => prev + 100);
+                    if (visualNovelStep < visualNovelDialogue.length - 1) {
+                      setVisualNovelStep(prev => prev + 1);
+                    } else {
+                      setVisualNovelStep(0);
+                      setIsGameActive(false);
+                      toast.success("¡Expedición en Coahuila completada!", {
+                        description: "Has aprendido valiosos datos culturales. ¡Obtienes +100 monedas!",
+                      });
+                      setCoins(prev => prev + 100);
+                    }
                   }
                 }}
+                data-no-jump-sfx="true"
                 className="absolute bottom-4 left-4 right-4 z-20 p-4 rounded-2xl bg-[#f7f1ea]/95 border-2 border-pink-300 shadow-md cursor-pointer select-none transition-all hover:bg-[#f7f1ea]"
               >
                 {/* Speaker Tag */}
@@ -768,7 +815,7 @@ function JugarPage() {
                 </span>
 
                 <p className="text-xs md:text-sm font-extrabold text-gray-800 leading-relaxed min-h-[50px] flex items-center pr-4">
-                  "{visualNovelDialogue[visualNovelStep]}"
+                  "{typedText}"
                 </p>
 
                 {/* Continue indicator */}
@@ -1943,7 +1990,7 @@ function JugarPage() {
               >
                 <Volume2 className="h-4.5 w-4.5 text-pink-600" /> EFECTOS DE SONIDO
               </Label>
-              <Switch id="sfx" checked={sfxOn} onCheckedChange={setSfxOn} />
+              <Switch id="sfx" checked={sfxEnabled} onCheckedChange={setSfxEnabled} />
             </div>
           </div>
 
