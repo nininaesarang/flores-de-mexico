@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail } from "lucide-react";
+import { toast } from "sonner";
 
 import { SetGameMusicTrack } from "@/contexts/game-audio-context";
+import { sendPasswordResetEmail } from "@/lib/api/auth.functions";
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
@@ -17,11 +19,22 @@ export const Route = createFileRoute("/forgot-password")({
 function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
+    if (!email) return;
+
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail({ data: { email } });
       setSubmitted(true);
+      toast.success("Enlace de recuperación enviado.");
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocurrió un error al enviar el correo. Inténtalo de nuevo.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -54,6 +67,7 @@ function ForgotPasswordPage() {
                 type="email"
                 placeholder="tu@correo.com"
                 required
+                disabled={loading}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-transparent text-sm outline-none"
@@ -62,9 +76,10 @@ function ForgotPasswordPage() {
 
             <button
               type="submit"
-              className="w-full rounded-full bg-pink-700 py-3 font-bold tracking-wider text-white shadow transition hover:bg-pink-800"
+              disabled={loading}
+              className="w-full rounded-full bg-pink-700 py-3 font-bold tracking-wider text-white shadow transition hover:bg-pink-800 disabled:opacity-50"
             >
-              ENVIAR CORREO
+              {loading ? "ENVIANDO CORREO..." : "ENVIAR CORREO"}
             </button>
           </form>
         ) : (
