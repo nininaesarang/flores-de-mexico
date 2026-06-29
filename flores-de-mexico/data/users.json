@@ -3,5 +3,10 @@
     "username": "Majo",
     "email": "mmtz5818@gmail.com",
     "passwordHash": "5448293741f03ac2e04cdfc6026dc383b5f8e7154efe9a3eb1f22cb12acb1f1dd8969d866da8688fd52061ebb5026cc0aebd94c3e6c500084d5db76c4c580506:61af35b3dc6ecf1d0a9de76ad98774ec"
+  },
+  {
+    "username": "tester",
+    "email": "tester@example.com",
+    "passwordHash": "ddf2ba9baf26aef6348fde30078f10c85ddaa9b40a436439f2d876a9f43ae9bd2c0365a4965bba7cc199791ae418e48e26ea3f891403ea2b6aee7238cea53d49:c8fddf826556b25b009a7432230d0fe7"
   }
 ]

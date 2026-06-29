@@ -50,11 +50,13 @@ function LoginPage() {
         localStorage.setItem("authUser", authUser);
         localStorage.setItem("username", response.user.username);
         localStorage.setItem("rememberEmail", response.user.email);
+        localStorage.setItem("keepLoggedIn", "true");
       } else {
         sessionStorage.setItem("authUser", authUser);
         sessionStorage.setItem("username", response.user.username);
         localStorage.removeItem("rememberEmail");
         localStorage.removeItem("username");
+        localStorage.setItem("keepLoggedIn", "false");
       }
 
       toast.success("Sesión iniciada.");

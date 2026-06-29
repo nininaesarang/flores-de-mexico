@@ -45,61 +45,70 @@ export const Route = createFileRoute("/jugar")({
   component: JugarPage,
 });
 
-// Mock States Data for Interactive Map
+// Municipios de Coahuila para el mapa interactivo
 const STATES_DATA = [
   {
-    id: "saltillo",
-    name: "Saltillo, Coahuila",
-    region: "Desierto",
-    regionIcon: "🏜️",
-    discoveries: "12 / 100",
-    coords: { x: 235, y: 135 },
-    fact: "aquí se tejen los sarapes más famosos del país? 🌵 Hilo a hilo, cada pieza es una obra de arte única y colorida.",
+    id: "san-pedro",
+    name: "San Pedro, Coahuila",
+    region: "Comarca Lagunera",
+    regionIcon: "🌵",
+    discoveries: "10 / 100",
+    coords: { x: 30, y: 71 },
+    fact: "¿Sabías que hay un pan muy exquisito, barato y exclusivo que solo existe en la Región Lagunera? ¡Ese es el Pan Francés! 🥖",
+  },
+  {
+    id: "francisco-madero",
+    name: "Fco. I. Madero, Coahuila",
+    region: "Comarca Lagunera",
+    regionIcon: "🌵",
+    discoveries: "8 / 100",
+    coords: { x: 17, y: 73 },
+    fact: "Francisco I. Madero es conocido como el alma de la laguna. Su suelo ferruginoso produce las uvas más dulces de la región. 🍑",
   },
   {
     id: "torreon",
     name: "Torreón, Coahuila",
-    region: "Desierto",
-    regionIcon: "🏜️",
+    region: "Comarca Lagunera",
+    regionIcon: "🌵",
     discoveries: "15 / 100",
-    coords: { x: 205, y: 145 },
-    fact: "en la Región Lagunera hay un pan super exclusivo y barato? 🍞 ¡El increíble y crujiente pan francés lagunero!",
+    coords: { x: 16, y: 92 },
+    fact: "Torreón es la ciudad más grande de la región lagunera y alberga el famoso Museo Arocena, uno de los mejores de México. 🏛️",
   },
   {
-    id: "merida",
-    name: "Mérida, Yucatán",
-    region: "Selva",
-    regionIcon: "🌳",
-    discoveries: "45 / 100",
-    coords: { x: 425, y: 200 },
-    fact: "la flor de Xtabentún es parte de una hermosa leyenda maya y con ella se produce un delicioso licor local?",
+    id: "saltillo",
+    name: "Saltillo, Coahuila",
+    region: "Sierras",
+    regionIcon: "🌵",
+    discoveries: "12 / 100",
+    coords: { x: 62, y: 89 },
+    fact: "En Saltillo se tejen los sarapes más famosos del país. Hilo a hilo, cada pieza es una obra de arte única y colorida. 🧵",
   },
   {
-    id: "guadalajara",
-    name: "Guadalajara, Jalisco",
-    region: "Valles",
-    regionIcon: "🌾",
-    discoveries: "28 / 100",
-    coords: { x: 215, y: 195 },
-    fact: "la dalia, flor nacional de México, crece silvestre en nuestros valles y bosques de clima templado?",
+    id: "acuna",
+    name: "Acuña, Coahuila",
+    region: "Frontera Norte",
+    regionIcon: "🌵",
+    discoveries: "6 / 100",
+    coords: { x: 42, y: 9 },
+    fact: "Ciudad Acuña comparte el Río Bravo con Del Río, Texas, y es famosa por su vibrante cultura norteña y sus puentes internacionales. 🌊",
   },
   {
-    id: "cdmx",
-    name: "Ciudad de México",
-    region: "Bosque",
-    regionIcon: "🌲",
-    discoveries: "60 / 100",
-    coords: { x: 275, y: 205 },
-    fact: "el ahuehuete o 'viejo del agua' es el árbol nacional de México y algunos ejemplares viven más de mil años?",
+    id: "monclova",
+    name: "Monclova, Coahuila",
+    region: "Centro Industrial",
+    regionIcon: "🌵",
+    discoveries: "9 / 100",
+    coords: { x: 62, y: 57 },
+    fact: "Monclova es la capital siderúrgica de México. La planta AHMSA produce más del 40% del acero nacional. ⚙️",
   },
   {
-    id: "oaxaca",
-    name: "Oaxaca, Oaxaca",
-    region: "Sierra",
-    regionIcon: "⛰️",
-    discoveries: "75 / 100",
-    coords: { x: 325, y: 235 },
-    fact: "se registran más de 300 especies de orquídeas silvestres en la sierra de Oaxaca, siendo un tesoro megadiverso?",
+    id: "piedras-negras",
+    name: "Piedras Negras, Coahuila",
+    region: "Frontera Norte",
+    regionIcon: "🌵",
+    discoveries: "7 / 100",
+    coords: { x: 76, y: 30 },
+    fact: "Piedras Negras es la cuna de los nachos. En 1943, Ignacio 'Nacho' Anaya los inventó aquí para unas clientas hambrientas. 🧀",
   },
 ];
 
@@ -168,15 +177,15 @@ const CATEGORIES_DATA: Category[] = [
     icon: Map,
     iconBg: "bg-rose-100",
     iconColor: "text-rose-600",
-    badge: "12 / 32",
-    percent: 37.5,
+    badge: "0 / 38",
+    percent: 0,
     borderColor: "border-pink-200",
     textColor: "text-[#70003c]",
     progressBg: "bg-pink-600",
     items: [
-      { id: "coahuila", name: "Coahuila", scientific: "Saltillo & Torreón", description: "Estado de desiertos y rica historia industrial. Región norte de México.", unlocked: true, image: "🌵", rarity: "Estado" },
-      { id: "yucatan", name: "Yucatán", scientific: "Mérida", description: "Cuna de la cultura maya, selvas y cenotes turquesas.", unlocked: true, image: "🌴", rarity: "Estado" },
-      { id: "jalisco", name: "Jalisco", scientific: "Guadalajara", description: "Tierra del mariachi y el tequila, con hermosos valles.", unlocked: true, image: "🎸", rarity: "Estado" },
+      { id: "coahuila", name: "Coahuila", scientific: "Saltillo & Torreón", description: "Estado de desiertos y rica historia industrial. Región norte de México.", unlocked: false, image: "🌵", rarity: "Estado" },
+      { id: "yucatan", name: "Yucatán", scientific: "Mérida", description: "Cuna de la cultura maya, selvas y cenotes turquesas.", unlocked: false, image: "🌴", rarity: "Estado" },
+      { id: "jalisco", name: "Jalisco", scientific: "Guadalajara", description: "Tierra del mariachi y el tequila, con hermosos valles.", unlocked: false, image: "🎸", rarity: "Estado" },
       { id: "oaxaca", name: "Oaxaca", scientific: "Oaxaca de Juárez", description: "Corazón cultural y megadiverso con sierras y tradiciones únicas.", unlocked: false, image: "🏺", rarity: "Estado" },
     ]
   },
@@ -193,10 +202,11 @@ const CATEGORIES_DATA: Category[] = [
     progressBg: "bg-teal-600",
     items: [
       { id: "oso", name: "El Oso Negro", scientific: "Ursus americanus eremicus", description: "El oso negro es el carnívoro más grande de México. Es habitante de la Sierra del Carmen en Coahuila y es un símbolo emblemático de conservación en la región norte.", unlocked: false, image: "/sticker-oso-negro.png", rarity: "Raro", price: 150 },
-      { id: "ajolote", name: "Ajolote", scientific: "Ambystoma mexicanum", description: "Anfibio endémico de Xochimilco, maestro de la regeneración.", unlocked: true, image: "🦎", rarity: "Común" },
-      { id: "aguila", name: "Águila Real", scientific: "Aquila chrysaetos", description: "Símbolo patrio de México, habita en zonas montañosas.", unlocked: true, image: "🦅", rarity: "Común" },
+      { id: "ajolote", name: "Ajolote", scientific: "Ambystoma mexicanum", description: "Anfibio endémico de Xochimilco, maestro de la regeneración.", unlocked: false, image: "🦎", rarity: "Común" },
+      { id: "aguila", name: "Águila Real", scientific: "Aquila chrysaetos", description: "Símbolo patrio de México, habita en zonas montañosas.", unlocked: false, image: "🦅", rarity: "Común" },
       { id: "monarca", name: "Mariposa Monarca", scientific: "Danaus plexippus", description: "Viaja miles de kilómetros cada año hasta los bosques de Michoacán.", unlocked: false, image: "🦋", rarity: "Común" },
       { id: "jaguar", name: "Jaguar", scientific: "Panthera onca", description: "El felino más grande de América, sagrado para los mayas.", unlocked: false, image: "🐆", rarity: "Épico" },
+      { id: "guajolote", name: "El Guajolote", scientific: "Meleagris gallopavo", description: "El pavo o guajolote es un ave nativa de México, domesticada desde la época prehispánica por los aztecas y mayas. Símbolo culinario y festivo del país.", unlocked: false, image: "/el-guajolote.png", rarity: "Común", price: 120 },
     ]
   },
   {
@@ -213,9 +223,9 @@ const CATEGORIES_DATA: Category[] = [
     items: [
       { id: "gobernadora", name: "Gobernadora", scientific: "Larrea tridentata", description: "Arbusto perenne emblemático del desierto mexicano, conocido por su característico aroma a tierra mojada tras las lluvias y su resistencia legendaria.", unlocked: false, image: "/sticker-gobernadora.png", rarity: "Desértico", price: 100 },
       { id: "tunas", name: "Tunas", scientific: "Opuntia ficus-indica", description: "Símbolo nacional de México, sus pencas y tunas dulces y jugosas maduran bajo el sol del desierto, siendo parte de nuestra bandera y base esencial de la gastronomía mexicana.", unlocked: false, image: "/sticker-tunas.png", rarity: "Común", price: 80 },
-      { id: "dalia", name: "Dalia", scientific: "Dahlia coccinea", description: "Flor nacional de México desde 1963, símbolo de la biodiversidad mexicana.", unlocked: true, image: "🌸", rarity: "Nacional" },
-      { id: "cempasuchil", name: "Cempasúchil", scientific: "Tagetes erecta", description: "La flor de los muertos, ilumina el camino de las almas en noviembre.", unlocked: true, image: "🌼", rarity: "Común" },
-      { id: "nochebuena", name: "Nochebuena", scientific: "Euphorbia pulcherrima", description: "Originaria de Guerrero, embellece la navidad en todo el mundo.", unlocked: true, image: "🌺", rarity: "Común" },
+      { id: "dalia", name: "Dalia", scientific: "Dahlia coccinea", description: "Flor nacional de México desde 1963, símbolo de la biodiversidad mexicana.", unlocked: false, image: "🌸", rarity: "Nacional" },
+      { id: "cempasuchil", name: "Cempasúchil", scientific: "Tagetes erecta", description: "La flor de los muertos, ilumina el camino de las almas en noviembre.", unlocked: false, image: "🌼", rarity: "Común" },
+      { id: "nochebuena", name: "Nochebuena", scientific: "Euphorbia pulcherrima", description: "Originaria de Guerrero, embellece la navidad en todo el mundo.", unlocked: false, image: "🌺", rarity: "Común" },
       { id: "jacaranda", name: "Jacaranda", scientific: "Jacaranda mimosifolia", description: "Pinta de morado la CDMX cada primavera, símbolo de amistad internacional.", unlocked: false, image: "💜", rarity: "Común" },
     ]
   },
@@ -233,8 +243,8 @@ const CATEGORIES_DATA: Category[] = [
     items: [
       { id: "reliquia", name: "La Reliquia", scientific: "Comida Típica Lagunera", description: "La reliquia es una comida típica en la región lagunera, sobretodo, después de reuniones catolicas donde se benera y reza a imagenes de la religión, se les hace danzas y regalan la comida a las personas que fueron al \"Rosario\".", unlocked: false, image: "/sticker-reliquia.png", rarity: "Tradicional", price: 200 },
       { id: "lonche", name: "Lonche", scientific: "Pan Francés Preparado", description: "El tradicional emparedado de pan francés lagunero, relleno de jamón, carnitas o aguacate, todo un clásico de la región.", unlocked: false, image: "/sticker-lonche.png", rarity: "Regional", price: 120 },
-      { id: "pan_frances", name: "Pan Francés", scientific: "Comarca Lagunera", description: "El clásico pan crujiente y barato exclusivo de Torreón y la Laguna.", unlocked: true, image: "🍞", rarity: "Común" },
-      { id: "mole", name: "Mole Poblano", scientific: "Puebla", description: "Exquisita salsa tradicional hecha de chocolate, chiles y especias.", unlocked: true, image: "🍛", rarity: "Común" },
+      { id: "pan_frances", name: "Pan Francés", scientific: "Comarca Lagunera", description: "El clásico pan crujiente y barato exclusivo de Torreón y la Laguna.", unlocked: false, image: "🍞", rarity: "Común" },
+      { id: "mole", name: "Mole Poblano", scientific: "Puebla", description: "Exquisita salsa tradicional hecha de chocolate, chiles y especias.", unlocked: false, image: "🍛", rarity: "Común" },
       { id: "tacos", name: "Tacos al Pastor", scientific: "Ciudad de México", description: "Delicioso trompo de carne con adobo, piña, cebolla y cilantro.", unlocked: false, image: "🌮", rarity: "Común" },
       { id: "cochinita", name: "Cochinita Pibil", scientific: "Yucatán", description: "Cerdo adobado en achiote cocido bajo tierra en hojas de plátano.", unlocked: false, image: "🥩", rarity: "Común" },
     ]
@@ -319,6 +329,22 @@ const BANNER_SLIDES = [
     ),
   },
 ];
+
+const TOTAL_MEXICAN_STATES = 32;
+const CURRENT_MUNICIPALITY_ID = "san-pedro";
+
+function getStoredVisitedMunicipalityIds() {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const stored = JSON.parse(localStorage.getItem("visitedMunicipalityIds") || "[]");
+    const visitedIds = Array.isArray(stored) ? stored.filter((id): id is string => typeof id === "string") : [];
+    if (visitedIds.length > 0) return visitedIds;
+    return localStorage.getItem("isMuseoMaderoUnlocked") === "true" ? [CURRENT_MUNICIPALITY_ID] : [];
+  } catch {
+    return localStorage.getItem("isMuseoMaderoUnlocked") === "true" ? [CURRENT_MUNICIPALITY_ID] : [];
+  }
+}
 
 function TiendaBanner() {
   const [current, setCurrent] = useState(0);
@@ -444,6 +470,62 @@ const OUTFITS_DATA: Outfit[] = [
 ];
 // ────────────────────────────────────────────────────────────────────────────
 
+const DEFAULT_COAHUILA_OUTFIT_IMAGE = "/coahuila-default.png";
+
+interface UserCosmetics {
+  purchasedOutfits: string[];
+  equippedOutfit: string | null;
+}
+
+function getCoahuilaOutfitImage(outfitId: string | null) {
+  if (!outfitId) return DEFAULT_COAHUILA_OUTFIT_IMAGE;
+  return OUTFITS_DATA.find((outfit) => outfit.id === outfitId)?.image || DEFAULT_COAHUILA_OUTFIT_IMAGE;
+}
+
+function getStoredUserCosmetics(): UserCosmetics {
+  if (typeof window === "undefined") {
+    return { purchasedOutfits: [], equippedOutfit: null };
+  }
+
+  const storedAuthUser = localStorage.getItem("authUser") || sessionStorage.getItem("authUser");
+  if (!storedAuthUser) {
+    return { purchasedOutfits: [], equippedOutfit: null };
+  }
+
+  try {
+    const user = JSON.parse(storedAuthUser) as Partial<UserCosmetics>;
+    return {
+      purchasedOutfits: Array.isArray(user.purchasedOutfits) ? user.purchasedOutfits : [],
+      equippedOutfit: typeof user.equippedOutfit === "string" ? user.equippedOutfit : null,
+    };
+  } catch {
+    return { purchasedOutfits: [], equippedOutfit: null };
+  }
+}
+
+function saveStoredUserCosmetics(cosmetics: UserCosmetics) {
+  if (typeof window === "undefined") return;
+
+  const storage =
+    sessionStorage.getItem("authUser") && !localStorage.getItem("authUser")
+      ? sessionStorage
+      : localStorage.getItem("authUser")
+        ? localStorage
+        : null;
+
+  if (!storage) return;
+
+  const storedAuthUser = storage.getItem("authUser");
+  if (!storedAuthUser) return;
+
+  try {
+    const user = JSON.parse(storedAuthUser);
+    storage.setItem("authUser", JSON.stringify({ ...user, ...cosmetics }));
+  } catch {
+    // Ignore malformed legacy sessions; in-memory state still works for this visit.
+  }
+}
+
 function JugarPage() {
 
 
@@ -454,6 +536,9 @@ function JugarPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>(CATEGORIES_DATA);
   const [selectedShopCategory, setSelectedShopCategory] = useState<string | null>(null);
+  const [purchasedOutfits, setPurchasedOutfits] = useState<string[]>(() => getStoredUserCosmetics().purchasedOutfits);
+  const [equippedOutfit, setEquippedOutfit] = useState<string | null>(() => getStoredUserCosmetics().equippedOutfit);
+  const coahuilaSprite = getCoahuilaOutfitImage(equippedOutfit);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -464,6 +549,102 @@ function JugarPage() {
       navigate({ to: "/login" });
     }
   }, [navigate]);
+
+  const updateCosmetics = (nextPurchasedOutfits: string[], nextEquippedOutfit: string | null) => {
+    setPurchasedOutfits(nextPurchasedOutfits);
+    setEquippedOutfit(nextEquippedOutfit);
+    saveStoredUserCosmetics({
+      purchasedOutfits: nextPurchasedOutfits,
+      equippedOutfit: nextEquippedOutfit,
+    });
+  };
+
+  const handleBuyOutfit = (outfit: Outfit) => {
+    if (purchasedOutfits.includes(outfit.id)) return;
+
+    if (coins < outfit.price) {
+      toast.error("Saldo insuficiente", {
+        description: "No tienes suficientes monedas MXN para comprar este outfit.",
+      });
+      return;
+    }
+
+    const nextPurchasedOutfits = [...purchasedOutfits, outfit.id];
+    setCoins((prev) => prev - outfit.price);
+    updateCosmetics(nextPurchasedOutfits, equippedOutfit);
+    toast.success(`¡Compraste ${outfit.name}!`, {
+      description: "Ahora puedes equiparlo desde la tienda.",
+    });
+  };
+
+  const handleEquipOutfit = (outfit: Outfit) => {
+    if (!purchasedOutfits.includes(outfit.id)) return;
+
+    updateCosmetics(purchasedOutfits, outfit.id);
+    toast.success(`${outfit.name} equipado`, {
+      description: "COAHUILA usará este outfit en el diálogo.",
+    });
+  };
+
+  const handleUnequipOutfit = (outfit: Outfit) => {
+    updateCosmetics(purchasedOutfits, null);
+    toast.success(`${outfit.name} desequipado`, {
+      description: "COAHUILA volvió a su traje tradicional.",
+    });
+  };
+
+  const renderOutfitActionButton = (outfit: Outfit, size: "compact" | "full" = "full") => {
+    const isPurchased = purchasedOutfits.includes(outfit.id);
+    const isEquipped = equippedOutfit === outfit.id;
+    const compactClasses = "h-8 rounded-full px-3 text-[10px]";
+    const fullClasses = "w-full rounded-full py-2.5 text-xs";
+    const className = `${
+      size === "compact" ? compactClasses : fullClasses
+    } font-black text-white shadow transition active:scale-95 cursor-pointer`;
+
+    if (!isPurchased) {
+      return (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            handleBuyOutfit(outfit);
+          }}
+          className={`${className} bg-[#d80073] hover:bg-[#b5005e]`}
+        >
+          Comprar
+        </button>
+      );
+    }
+
+    if (!isEquipped) {
+      return (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            handleEquipOutfit(outfit);
+          }}
+          className={`${className} bg-teal-600 hover:bg-teal-700`}
+        >
+          Equipar
+        </button>
+      );
+    }
+
+    return (
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          handleUnequipOutfit(outfit);
+        }}
+        className={`${className} bg-gray-700 hover:bg-gray-800`}
+      >
+        Desequipar
+      </button>
+    );
+  };
 
   const renderNavButton = (tab: "jugar" | "coleccion" | "tienda" | "perfil", Icon: any, label: string) => {
     const isActive = activeTab === tab;
@@ -616,16 +797,52 @@ function JugarPage() {
   const [typedText, setTypedText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
+  // New progression and level states
+  const [isMuseoMaderoUnlocked, setIsMuseoMaderoUnlocked] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("isMuseoMaderoUnlocked") === "true";
+    }
+    return false;
+  });
+  const [levelBackground, setLevelBackground] = useState("/museo-madero.jpg");
+  const [userHungryChoice, setUserHungryChoice] = useState<boolean | null>(null);
+  const [showHungryChoices, setShowHungryChoices] = useState(false);
+  const [levelCompletedOverlayOpen, setLevelCompletedOverlayOpen] = useState(false);
+  const [showLoncheImage, setShowLoncheImage] = useState(false);
+  const [, setVisitedMunicipalityIds] = useState<string[]>(() => getStoredVisitedMunicipalityIds());
+  const [municipiosDescubiertos, setMunicipiosDescubiertos] = useState(() => {
+    if (typeof window !== "undefined") {
+      return getStoredVisitedMunicipalityIds().length;
+    }
+    return 0;
+  });
+
   const visualNovelDialogue = [
-    "¡Hola explorador! Qué gusto tenerte en Coahuila. Te doy la bienvenida al majestuoso Museo Madero en San Pedro, Coahuila. 🌸",
-    "¿Sabías que el prócer Francisco I. Madero es de aquí de San Pedro y el Museo Madero está ubicado justamente en este lugar? 🍇",
-    "Aquí en el desierto, la vida florece con una fuerza increíble. Plantas como la Gobernadora y las Tunas son verdaderos tesoros de nuestra flora. 🌵",
-    "¡Toma una foto de este lugar presionando el botón de la cámara! Así la guardarás en tu dispositivo como recuerdo. 📸",
-    "Además, puedes abrir mi librito de viaje para consultar la información detallada de la flora, fauna y gastronomía del estado. 📖",
-    "¡Sigue explorando todo México para completar tu colección! ¡Buen viaje, explorador! 🎒"
+    "¡Hola explorador! Te doy la bienvenida a San Pedro, Coahuila. Aquí se encuentra el histórico Museo Madero. 🌸",
+    "Francisco I. Madero vivió aquí y escribió gran parte de su célebre libro 'La Sucesión Presidencial'. ¡San Pedro es el origen y cuna de la Revolución! 🍇",
+    "Antes de continuar, recuerda que puedes presionar el botón de la Cámara (📸) para tomarnos una foto, o el Librito (📖) para consultar información sobre la flora y fauna.",
+    "Por cierto... ¿no tienes un poco de hambre? Viajar por Coahuila siempre abre el apetito. 😋",
+    userHungryChoice === true
+      ? "¡Excelente! Vamos al Mercado Benito Juárez. Aquí visitaremos la lonchería súper popular 'Los Súper Sabios' para pedir un lonche de puerco riquísimo. ¡Toda una tradición!"
+      : "¡Pues yo sí! Jeje. Acompáñame de todos modos al Mercado Benito Juárez. Iremos a la lonchería súper popular 'Los Súper Sabios' para comer un lonche de puerco. ¡Te va a encantar!",
+    "¡Estuvo riquísimo! Ahora que tenemos energía, debemos ir a la central de autobuses para tomar un camión Ejidales directo al siguiente municipio: Francisco I. Madero, conocido como el alma de la laguna. 🚌",
+    "¡Aquí termina este tramo de nuestro viaje! ¡Buen viaje al siguiente municipio, explorador! 🎒"
   ];
 
+  // Auto-trigger choices menu when step is 3
+  useEffect(() => {
+    if (isGameActive && visualNovelStep === 3) {
+      setShowHungryChoices(true);
+    } else {
+      setShowHungryChoices(false);
+    }
+  }, [visualNovelStep, isGameActive]);
+
   // Typewriter effect logic
+  const playSfxRef = useRef(playSfx);
+  useEffect(() => { playSfxRef.current = playSfx; });
+  const typewriterRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     if (!isGameActive) {
       setTypedText("");
@@ -649,30 +866,35 @@ function JugarPage() {
 
         // Play text typing SFX (only for non-whitespace characters)
         if (nextChar.trim()) {
-          playSfx("text");
+          playSfxRef.current("text");
         }
 
         currentIndex++;
       } else {
         setIsTyping(false);
         clearInterval(intervalId);
+        typewriterRef.current = null;
       }
     }, delay);
 
+    typewriterRef.current = intervalId;
+
     return () => {
       clearInterval(intervalId);
+      typewriterRef.current = null;
     };
-  }, [visualNovelStep, isGameActive, textSpeed, playSfx]);
+  }, [visualNovelStep, isGameActive, textSpeed]);
 
   const handleDownloadBackground = () => {
     const link = document.createElement("a");
-    link.href = "/museo-madero.jpg";
-    link.download = "museo-madero.jpg";
+    link.href = levelBackground;
+    const filename = levelBackground.split("/").pop() || "background.jpg";
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     toast.success("¡Foto guardada!", {
-      description: "La imagen del Museo Madero se ha guardado en tu galería de descargas.",
+      description: `La imagen se ha guardado en tu galería de descargas.`,
     });
   };
 
@@ -698,6 +920,10 @@ function JugarPage() {
     if (energy > 0) {
       setEnergy((prev) => prev - 1);
       setVisualNovelStep(0);
+      setLevelBackground("/museo-madero.jpg");
+      setUserHungryChoice(null);
+      setShowHungryChoices(false);
+      setShowLoncheImage(false);
       setIsGameActive(true);
       toast.success("¡Buen viaje!", {
         description: `Iniciando expedición en ${selectedState.name}...`,
@@ -710,7 +936,7 @@ function JugarPage() {
   };
 
   const copyShareLink = () => {
-    const textToCopy = `¡Estoy en ${selectedState.name}! ¿Sabías que ${selectedState.fact} Descubre más en ${appLink}`;
+    const textToCopy = `¡Estoy en ${selectedState.name}! ${selectedState.fact} Descubre más en ${appLink}`;
     navigator.clipboard.writeText(textToCopy);
     toast.success("¡Copiado al portapapeles!", {
       description: "El enlace de invitación y tu estado han sido copiados.",
@@ -762,7 +988,7 @@ function JugarPage() {
               {/* Blurred background image */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-all duration-500 scale-110 filter blur-[4px] opacity-90"
-                style={{ backgroundImage: `url('/museo-madero.jpg')` }}
+                style={{ backgroundImage: `url('${levelBackground}')` }}
               />
               <div className="absolute inset-0 bg-black/15 z-0" />
 
@@ -777,8 +1003,8 @@ function JugarPage() {
 
               {/* Character Coahuila */}
               <img
-                src="/coahuila-default.png"
-                alt="Coahuila"
+                src={coahuilaSprite}
+                alt={equippedOutfit ? `Coahuila con outfit ${equippedOutfit}` : "Coahuila con traje tradicional"}
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[82%] object-contain select-none z-10 pointer-events-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.2)] animate-fade-in-slide-up"
               />
 
@@ -803,23 +1029,98 @@ function JugarPage() {
                 </button>
               </div>
 
+              {/* Lonche Image Fullscreen Overlay */}
+              {showLoncheImage && (
+                <div
+                  onClick={() => {
+                    playSfx("little");
+                    setShowLoncheImage(false);
+                    setVisualNovelStep(5);
+                  }}
+                  className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/70 cursor-pointer animate-fade-in"
+                >
+                  <img
+                    src="/lonche-puerco.png"
+                    alt="Lonche de puerco de Los Súper Sabios"
+                    className="max-h-[65%] max-w-[85%] object-contain rounded-2xl shadow-2xl drop-shadow-[0_8px_32px_rgba(0,0,0,0.6)] animate-fade-in-slide-up"
+                  />
+                  <p className="mt-4 text-white text-xs font-black tracking-wide bg-black/50 rounded-full px-4 py-1.5 animate-bounce">
+                    Toca para continuar ▶
+                  </p>
+                </div>
+              )}
+
               {/* Dialogue Box */}
               <div 
                 onClick={() => {
+                  if (showHungryChoices) return;
                   playSfx("little");
                   if (isTyping) {
+                    // Cancel the running interval immediately before setting full text
+                    if (typewriterRef.current) {
+                      clearInterval(typewriterRef.current);
+                      typewriterRef.current = null;
+                    }
                     setTypedText(visualNovelDialogue[visualNovelStep]);
                     setIsTyping(false);
                   } else {
+                    if (visualNovelStep === 4) {
+                      setShowLoncheImage(true);
+                      try {
+                        const dripAudio = new Audio("/audio/sfx.wav");
+                        dripAudio.volume = 1.0;
+                        dripAudio.load();
+                        dripAudio.play().catch((err) => console.error("sfx.wav error:", err));
+                      } catch (e) {
+                        console.error("sfx.wav excepción:", e);
+                      }
+                      return;
+                    }
                     if (visualNovelStep < visualNovelDialogue.length - 1) {
                       setVisualNovelStep(prev => prev + 1);
                     } else {
                       setVisualNovelStep(0);
                       setIsGameActive(false);
-                      toast.success("¡Expedición en Coahuila completada!", {
-                        description: "Has aprendido valiosos datos culturales. ¡Obtienes +100 monedas!",
+
+                      // Unlock Museo Madero
+                      setIsMuseoMaderoUnlocked(true);
+                      localStorage.setItem("isMuseoMaderoUnlocked", "true");
+
+                      // Track unique municipalities visited so replays do not inflate the counter.
+                      setVisitedMunicipalityIds(prev => {
+                        if (prev.includes(CURRENT_MUNICIPALITY_ID)) {
+                          localStorage.setItem("municipiosDescubiertos", String(prev.length));
+                          setMunicipiosDescubiertos(prev.length);
+                          return prev;
+                        }
+
+                        const nextVisited = [...prev, CURRENT_MUNICIPALITY_ID];
+                        localStorage.setItem("visitedMunicipalityIds", JSON.stringify(nextVisited));
+                        localStorage.setItem("municipiosDescubiertos", String(nextVisited.length));
+                        setMunicipiosDescubiertos(nextVisited.length);
+                        return nextVisited;
                       });
+
+                      // Unlock Lonche Lagunero in categories state
+                      setCategories(prevCategories =>
+                        prevCategories.map(c => {
+                          if (c.id === "comidas") {
+                            return {
+                              ...c,
+                              items: c.items.map(i =>
+                                i.id === "lonche" ? { ...i, unlocked: true } : i
+                              )
+                            };
+                          }
+                          return c;
+                        })
+                      );
+
+                      // Award coins
                       setCoins(prev => prev + 100);
+
+                      // Trigger Completed Overlay
+                      setLevelCompletedOverlayOpen(true);
                     }
                   }
                 }}
@@ -828,17 +1129,48 @@ function JugarPage() {
               >
                 {/* Speaker Tag */}
                 <span className="absolute -top-3 left-4 rounded-full bg-pink-700 px-3 py-0.5 text-[9px] font-black text-white uppercase tracking-wider shadow-sm">
-                  Coahuila
+                  COAHUILA
                 </span>
 
                 <p className="text-xs md:text-sm font-extrabold text-gray-800 leading-relaxed min-h-[50px] flex items-center pr-4">
                   "{typedText}"
                 </p>
 
-                {/* Continue indicator */}
-                <div className="absolute right-3 bottom-2.5 animate-bounce">
-                  <span className="text-[10px] text-pink-600 font-black">▶</span>
-                </div>
+                {showHungryChoices ? (
+                  <div className="mt-3 flex gap-2 z-30">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playSfx("little");
+                        setUserHungryChoice(true);
+                        setLevelBackground("/mercado-benito-juarez.jpg");
+                        setVisualNovelStep(4);
+                        setShowHungryChoices(false);
+                      }}
+                      className="flex-1 py-1.5 px-3 rounded-xl bg-pink-600 hover:bg-pink-700 text-white text-[11px] font-black shadow-md transition active:scale-95 cursor-pointer text-center"
+                    >
+                      Sí, ¡tengo mucha hambre! 🌮
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playSfx("little");
+                        setUserHungryChoice(false);
+                        setLevelBackground("/mercado-benito-juarez.jpg");
+                        setVisualNovelStep(4);
+                        setShowHungryChoices(false);
+                      }}
+                      className="flex-1 py-1.5 px-3 rounded-xl bg-gray-500 hover:bg-gray-600 text-white text-[11px] font-black shadow-md transition active:scale-95 cursor-pointer text-center"
+                    >
+                      No, pero te acompaño 🎒
+                    </button>
+                  </div>
+                ) : (
+                  /* Continue indicator */
+                  <div className="absolute right-3 bottom-2.5 animate-bounce">
+                    <span className="text-[10px] text-pink-600 font-black">▶</span>
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -863,43 +1195,20 @@ function JugarPage() {
                   </span>
                 </div>
 
-                {/* SVG Interactive Map Area */}
-                <div className="relative aspect-square w-full rounded-2xl bg-gradient-to-b from-rose-950 via-rose-900 to-pink-900 p-2 overflow-hidden shadow-inner border border-rose-800">
-                  {/* Styled Map Silhouette */}
-                  <svg
-                    viewBox="0 0 500 350"
-                    className="absolute inset-0 h-full w-full opacity-35 select-none"
-                  >
-                    {/* Simplified Stylized Mexico Background Map */}
-                    <path
-                      d="M 50,70 Q 70,100 85,150 T 80,180 Z"
-                      fill="none"
-                      stroke="#ffffff"
-                      strokeWidth="3"
-                    />
-                    <path
-                      d="M 120,80 
-                         C 170,85 230,105 270,115 
-                         C 310,125 320,140 330,170 
-                         C 345,200 320,220 340,240 
-                         C 360,260 380,245 400,230 
-                         C 420,215 440,195 460,195 
-                         C 475,195 480,215 470,235 
-                         C 455,255 435,260 415,265 
-                         C 385,270 375,285 365,295 
-                         C 340,315 310,300 280,270 
-                         C 250,240 210,235 170,220 
-                         C 130,205 115,170 105,130 Z"
-                      fill="#ffffff"
-                      stroke="#ffffff"
-                      strokeWidth="2.5"
-                    />
-                  </svg>
+                {/* Interactive Map with image */}
+                <div className="relative w-full rounded-2xl overflow-hidden shadow-inner border border-rose-800" style={{aspectRatio: '4/5'}}>
+                  {/* Mapa de Coahuila */}
+                  <img
+                    src="/mapa-coahuila.jpg"
+                    alt="Mapa de municipios de Coahuila"
+                    className="absolute inset-0 w-full h-full object-cover select-none"
+                    draggable={false}
+                  />
 
-                  {/* Grid Lines for aesthetics */}
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/10 to-transparent pointer-events-none" />
+                  {/* Overlay oscuro sutil para que los pines resalten */}
+                  <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
-                  {/* Interactive Hotspots */}
+                  {/* Interactive Hotspots - coordenadas en % sobre la imagen */}
                   {STATES_DATA.map((state) => {
                     const isSelected = selectedState.id === state.id;
                     return (
@@ -907,31 +1216,31 @@ function JugarPage() {
                         key={state.id}
                         onClick={() => setSelectedState(state)}
                         style={{
-                          left: `${state.coords.x}px`,
-                          top: `${state.coords.y}px`,
+                          left: `${state.coords.x}%`,
+                          top: `${state.coords.y}%`,
                         }}
                         className="absolute -translate-x-1/2 -translate-y-1/2 group z-10"
                         title={state.name}
                       >
-                        {/* Hover Badge */}
-                        <span className="absolute bottom-6 left-1/2 -translate-x-1/2 scale-0 rounded bg-white px-2 py-0.5 text-[10px] font-black text-rose-950 shadow transition-all group-hover:scale-100 whitespace-nowrap border border-pink-200">
+                        {/* Tooltip on hover */}
+                        <span className="absolute bottom-7 left-1/2 -translate-x-1/2 scale-0 rounded-lg bg-white px-2 py-0.5 text-[10px] font-black text-rose-950 shadow-lg transition-all group-hover:scale-100 whitespace-nowrap border border-pink-200">
                           {state.name.split(",")[0]}
                         </span>
 
-                        {/* Pulsing ring around active state */}
+                        {/* Pulsing ring on selected */}
                         {isSelected && (
-                          <span className="absolute -inset-2 rounded-full border border-pink-400 bg-pink-500/35 animate-ping duration-1000" />
+                          <span className="absolute -inset-2 rounded-full border border-pink-400 bg-pink-500/40 animate-ping duration-1000" />
                         )}
 
-                        {/* Cactus / Pin marker */}
+                        {/* Pin marker */}
                         <div
                           className={`flex h-7 w-7 items-center justify-center rounded-full shadow-md border-2 transition-transform duration-300 ${
                             isSelected
                               ? "bg-pink-500 border-white scale-125 text-base"
-                              : "bg-white/90 border-pink-500 text-xs hover:scale-110"
+                              : "bg-white/95 border-pink-500 text-xs hover:scale-110"
                           }`}
                         >
-                          🌵
+                          {state.regionIcon}
                         </div>
                       </button>
                     );
@@ -948,8 +1257,8 @@ function JugarPage() {
                   🌸
                 </div>
                 <div>
-                  <div className="text-[10px] font-black tracking-wider text-gray-400">DESCUBIERTAS</div>
-                  <div className="text-sm font-extrabold text-pink-700">{selectedState.discoveries}</div>
+                  <div className="text-[10px] font-black tracking-wider text-gray-400">MUNICIPIOS</div>
+                  <div className="text-sm font-extrabold text-pink-700">{municipiosDescubiertos} / 38</div>
                 </div>
               </div>
 
@@ -1037,11 +1346,14 @@ function JugarPage() {
                     const IconComponent = cat.icon;
                     const unlockedCount = cat.items.filter((i) => i.unlocked).length;
                     const totalCount = cat.items.length;
+                    const estadosUnlocked = MEXICAN_STATES.filter(s => s.unlocked).length;
                     const displayBadge =
-                      cat.id === "estados" ? cat.badge : `${unlockedCount} / ${totalCount}`;
+                      cat.id === "estados"
+                        ? `${estadosUnlocked} / ${TOTAL_MEXICAN_STATES}`
+                        : `${unlockedCount} / ${totalCount}`;
                     const displayPercent =
                       cat.id === "estados"
-                        ? cat.percent
+                        ? (estadosUnlocked / TOTAL_MEXICAN_STATES) * 100
                         : totalCount > 0
                           ? (unlockedCount / totalCount) * 100
                           : 0;
@@ -1150,7 +1462,7 @@ function JugarPage() {
                     </button>
                     <h3 className="text-base font-extrabold text-gray-800">Álbumes de Estados</h3>
                     <span className="rounded-full bg-pink-100 px-3 py-0.5 text-xs font-extrabold text-pink-700">
-                      12 / 32
+                      {MEXICAN_STATES.filter((state) => state.unlocked).length} / {TOTAL_MEXICAN_STATES}
                     </span>
                   </div>
 
@@ -1232,7 +1544,7 @@ function JugarPage() {
                     </button>
                     <h3 className="text-base font-extrabold text-[#70003c]">Coahuila</h3>
                     <div className="flex items-center gap-1 rounded-full bg-[#d80073] px-3 py-1 text-xs font-extrabold text-white shadow-sm">
-                      <span className="text-[10px]">⭐</span> 1 / 6
+                      <span className="text-[10px]">⭐</span> {isMuseoMaderoUnlocked ? 1 : 0} / 6
                     </div>
                   </div>
 
@@ -1251,38 +1563,59 @@ function JugarPage() {
                     {/* Progress Bar */}
                     <div className="mt-3 space-y-1">
                       <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                        <div className="h-full w-[16.6%] bg-pink-600 rounded-full" />
+                        <div 
+                          className="h-full bg-pink-600 rounded-full transition-all duration-500" 
+                          style={{ width: isMuseoMaderoUnlocked ? "16.6%" : "0%" }}
+                        />
                       </div>
                     </div>
                   </div>
 
                   {/* Sticker Album Grid */}
                   <div className="grid grid-cols-2 gap-3.5 bg-gray-50/50 p-3 rounded-2xl border border-gray-100">
-                    {/* Card 01: Museo Madero Unlocked */}
-                    <button
-                      onClick={() => {
-                        setSelectedSticker({
-                          id: "coahuila_01",
-                          name: "Museo Madero",
-                          scientific: "San Pedro, Coahuila",
-                          description: "Cuna de la Revolución Mexicana. El histórico edificio donde Francisco I. Madero escribió gran parte de su libro 'La Sucesión Presidencial'.",
-                          unlocked: true,
-                          image: "/museo-madero.png?v=2026",
-                          rarity: "Histórico"
-                        });
-                      }}
-                      className="flex flex-col items-center bg-white border border-pink-200 rounded-2xl p-2 relative shadow-sm hover:scale-[1.03] transition-all"
-                    >
-                      <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-black text-white bg-[#d80073]">
-                        01
+                    {/* Card 01: Museo Madero Dynamic */}
+                    {isMuseoMaderoUnlocked ? (
+                      <button
+                        onClick={() => {
+                          setSelectedSticker({
+                            id: "coahuila_01",
+                            name: "Museo Madero",
+                            scientific: "San Pedro, Coahuila",
+                            description: "Cuna de la Revolución Mexicana. El histórico edificio donde Francisco I. Madero escribió gran parte de su libro 'La Sucesión Presidencial'.",
+                            unlocked: true,
+                            image: "/museo-madero.png?v=2026",
+                            rarity: "Histórico"
+                          });
+                        }}
+                        className="flex flex-col items-center bg-white border border-pink-200 rounded-2xl p-2 relative shadow-sm hover:scale-[1.03] transition-all"
+                      >
+                        <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-black text-white bg-[#d80073]">
+                          01
+                        </div>
+                        <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
+                          <img src="/museo-madero.png?v=2026" className="w-full h-full object-contain hover:scale-105 transition-transform" />
+                        </div>
+                        <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                          Museo Madero (San Pedro)
+                        </span>
+                      </button>
+                    ) : (
+                      <div
+                        className="flex flex-col items-center justify-center bg-white border border-gray-250 rounded-2xl p-2.5 aspect-square relative shadow-xs animate-pulse"
+                      >
+                        <div className="absolute top-2 left-2 flex h-5 w-6 items-center justify-center rounded-br-lg rounded-tl-xl text-[9px] font-bold text-gray-400 bg-gray-50 border border-gray-100">
+                          01
+                        </div>
+                        <div className="flex flex-col items-center justify-center gap-1.5 mt-2">
+                          <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-50 border border-gray-100/80 text-gray-300">
+                            <Lock className="h-4 w-4 text-gray-300" />
+                          </div>
+                          <span className="text-[9px] font-bold text-gray-400 text-center uppercase tracking-wide">
+                            Bloqueado
+                          </span>
+                        </div>
                       </div>
-                      <div className="aspect-square w-full rounded-xl flex items-center justify-center bg-[#b3f3ed]/25 p-1 overflow-hidden">
-                        <img src="/museo-madero.png?v=2026" className="w-full h-full object-contain hover:scale-105 transition-transform" />
-                      </div>
-                      <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
-                        Museo Madero (San Pedro)
-                      </span>
-                    </button>
+                    )}
 
                     {/* Cards 02 to 06: Locked, blank albums with a lock icon */}
                     {[2, 3, 4, 5, 6].map((num) => (
@@ -1497,7 +1830,7 @@ function JugarPage() {
                 if (!currentCat) return null;
 
                 // Filtrar stickers que tengan precio
-                const stickersForSale = currentCat.items.filter((item) => item.price !== undefined);
+                const stickersForSale = currentCat.items.filter((item) => item.price !== undefined && item.id !== "lonche");
 
                 return (
                   <div className="space-y-4">
@@ -1637,12 +1970,15 @@ function JugarPage() {
                 {/* Grid de outfits */}
                 <div className="grid grid-cols-2 gap-4">
                   {OUTFITS_DATA.map((outfit) => (
-                    <button
+                    <div
                       key={outfit.id}
-                      onClick={() => setSelectedOutfit(outfit)}
-                      className="flex flex-col rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden text-left active:scale-95 transition-transform"
+                      className="flex flex-col rounded-2xl bg-white border border-gray-100 shadow-sm overflow-hidden text-left"
                     >
-                      <div className="relative flex items-end justify-center bg-[#f5f5f0] h-52 overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedOutfit(outfit)}
+                        className="relative flex items-end justify-center bg-[#f5f5f0] h-52 overflow-hidden active:scale-95 transition-transform"
+                      >
                         {outfit.badge && (
                           <span className="absolute top-2 left-2 bg-[#1aab6d] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
                             {outfit.badge}
@@ -1656,16 +1992,23 @@ function JugarPage() {
                           alt={outfit.name}
                           className="h-48 w-auto object-contain object-bottom drop-shadow-md"
                         />
-                      </div>
+                      </button>
                       <div className="p-3">
                         <p className="text-xs font-bold text-gray-800 leading-tight mb-0.5">{outfit.name}</p>
                         <p className="text-[10px] text-gray-400 font-medium mb-2">{outfit.state}</p>
-                        <div className="flex items-center justify-between">
+                        <div className="mb-2 flex items-center justify-between">
                           <span className="text-sm font-black text-pink-600">{outfit.price} MXN</span>
-                          <span className="text-[10px] font-bold text-pink-500 underline underline-offset-2">Ver info →</span>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedOutfit(outfit)}
+                            className="text-[10px] font-bold text-pink-500 underline underline-offset-2"
+                          >
+                            Ver info
+                          </button>
                         </div>
+                        {renderOutfitActionButton(outfit)}
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
 
@@ -1705,10 +2048,11 @@ function JugarPage() {
                       <span className="text-sm font-black text-pink-600">450 MXN</span>
                       <button
                         onClick={() => toast.success("¡Coahuila Vaquera añadida!", { description: "Se han deducido 450 MXN de tu saldo." })}
-                        className="flex items-center justify-center h-7 w-7 rounded-full bg-pink-600 text-white shadow hover:bg-pink-700 transition"
+                        className="hidden"
                       >
                         <ShoppingBag className="h-3.5 w-3.5" />
                       </button>
+                      {renderOutfitActionButton(OUTFITS_DATA[0], "compact")}
                     </div>
                   </div>
                 </div>
@@ -1722,9 +2066,10 @@ function JugarPage() {
                     <p className="text-xs font-bold text-gray-800 leading-tight mb-1">Coahuila Santos Laguna</p>
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-black text-pink-600">600 MXN</span>
+                      {renderOutfitActionButton(OUTFITS_DATA[1], "compact")}
                       <button
                         onClick={() => toast.success("¡Coahuila Santos Laguna añadida!", { description: "Se han deducido 600 MXN de tu saldo." })}
-                        className="flex items-center justify-center h-7 w-7 rounded-full bg-pink-600 text-white shadow hover:bg-pink-700 transition"
+                        className="hidden"
                       >
                         <ShoppingBag className="h-3.5 w-3.5" />
                       </button>
@@ -1936,6 +2281,7 @@ function JugarPage() {
                   onClick={() => {
                     localStorage.removeItem("authUser");
                     localStorage.removeItem("username");
+                    localStorage.removeItem("keepLoggedIn");
                     sessionStorage.removeItem("authUser");
                     sessionStorage.removeItem("username");
                     navigate({ to: "/login" });
@@ -2121,7 +2467,7 @@ function JugarPage() {
             </div>
 
             <p className="text-xs font-medium text-gray-700 leading-relaxed bg-pink-50/50 rounded-xl p-3 border border-pink-50">
-              Estoy en {selectedState.name}. ¿Sabías que {selectedState.fact} {appLink}
+              Estoy en {selectedState.name}. {selectedState.fact} {appLink}
             </p>
           </div>
 
@@ -2139,7 +2485,7 @@ function JugarPage() {
               <button
                 onClick={() => {
                   const xText = encodeURIComponent(
-                    `Estoy en ${selectedState.name}. ¿Sabías que ${selectedState.fact} ${appLink}`
+                    `Estoy en ${selectedState.name}. ${selectedState.fact} ${appLink}`
                   );
                   window.open(`https://twitter.com/intent/tweet?text=${xText}`, "_blank");
                   toast.success("Abriendo Twitter/X...");
@@ -2153,7 +2499,7 @@ function JugarPage() {
               <button
                 onClick={() => {
                   const wpText = encodeURIComponent(
-                    `Estoy en ${selectedState.name}. ¿Sabías que ${selectedState.fact} ${appLink}`
+                    `Estoy en ${selectedState.name}. ${selectedState.fact} ${appLink}`
                   );
                   window.open(`https://api.whatsapp.com/send?text=${wpText}`, "_blank");
                   toast.success("Abriendo WhatsApp...");
@@ -2161,7 +2507,7 @@ function JugarPage() {
                 }}
                 className="flex items-center justify-center gap-1.5 rounded-full border-2 border-slate-300 bg-white py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50"
               >
-                <Facebook className="h-4 w-4 text-blue-600 fill-blue-600" /> WhatsApp
+                <svg viewBox="0 0 24 24" className="h-4 w-4 fill-green-500" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.528 5.847L0 24l6.336-1.506A11.955 11.955 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.374l-.36-.214-3.727.977.995-3.634-.235-.374A9.818 9.818 0 1112 21.818z"/></svg> WhatsApp
               </button>
             </div>
           </div>
@@ -2271,10 +2617,13 @@ function JugarPage() {
                     });
                     setSelectedOutfit(null);
                   }}
-                  className="flex-1 rounded-full bg-[#d80073] py-3 font-bold text-white shadow transition hover:bg-[#b5005e]"
+                  className="hidden"
                 >
                   Comprar — {selectedOutfit.price} MXN
                 </button>
+                <div className="flex-1">
+                  {renderOutfitActionButton(selectedOutfit)}
+                </div>
                 <button
                   onClick={() => setSelectedOutfit(null)}
                   className="rounded-full border-2 border-pink-200 bg-white px-4 py-3 font-bold text-pink-700 transition hover:bg-pink-50"
@@ -2416,6 +2765,76 @@ function JugarPage() {
           </button>
         </DialogContent>
       </Dialog>
+
+      {/* Level Completed Overlay */}
+      {levelCompletedOverlayOpen && (
+        <div 
+          onClick={() => setLevelCompletedOverlayOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-md animate-fade-in cursor-pointer select-none"
+        >
+          <div className="w-full max-w-sm mx-4 bg-[#fcf9f5] border-4 border-yellow-400 rounded-3xl p-6 shadow-2xl text-center space-y-6 animate-scale-in">
+            {/* Confetti emoji header */}
+            <div className="text-5xl animate-bounce">🎉✨🏆</div>
+            
+            <div className="space-y-1">
+              <h2 className="text-2xl font-black text-pink-700 tracking-tight">
+                ¡Nivel Completado!
+              </h2>
+              <p className="text-xs font-bold text-gray-500">
+                Expedición en San Pedro, Coahuila
+              </p>
+            </div>
+
+            {/* Unlocked Stickers Showcase */}
+            <div className="space-y-3">
+              <p className="text-xs font-extrabold text-teal-800">
+                ¡Has desbloqueado 2 nuevos stickers!
+              </p>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {/* Sticker 1: Museo Madero */}
+                <div className="flex flex-col items-center bg-white border-2 border-pink-200 rounded-2xl p-2.5 shadow-sm animate-pulse">
+                  <span className="rounded-full bg-pink-100 px-2 py-0.5 text-[8px] font-black text-pink-700 uppercase tracking-wide mb-1.5">
+                    Histórico
+                  </span>
+                  <div className="aspect-square w-full rounded-xl bg-pink-50/50 p-1.5 flex items-center justify-center">
+                    <img src="/museo-madero.png" alt="Museo Madero" className="h-16 w-auto object-contain" />
+                  </div>
+                  <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                    Museo Madero
+                  </span>
+                </div>
+
+                {/* Sticker 2: Lonche Lagunero */}
+                <div className="flex flex-col items-center bg-white border-2 border-pink-200 rounded-2xl p-2.5 shadow-sm animate-pulse">
+                  <span className="rounded-full bg-pink-100 px-2 py-0.5 text-[8px] font-black text-pink-700 uppercase tracking-wide mb-1.5">
+                    Regional
+                  </span>
+                  <div className="aspect-square w-full rounded-xl bg-pink-50/50 p-1.5 flex items-center justify-center">
+                    <img src="/sticker-lonche.png" alt="Lonche" className="h-16 w-auto object-contain" />
+                  </div>
+                  <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                    Lonche Lagunero
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Coins / Reward indicator */}
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border-2 border-amber-300 px-4 py-1.5">
+              <Coins className="h-4 w-4 fill-amber-400 text-amber-600 animate-spin" />
+              <span className="text-xs font-black text-amber-800">
+                +100 MXN Monedas
+              </span>
+            </div>
+
+            {/* Dismiss Hint */}
+            <div className="text-[10px] font-black text-pink-600 animate-pulse pt-2">
+              Toca la pantalla para continuar
+            </div>
+          </div>
+        </div>
+      )}
     </div>
     </>
   );

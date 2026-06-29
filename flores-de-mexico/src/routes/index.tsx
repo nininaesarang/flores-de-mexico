@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Play, Settings, Info, Sun, Volume2, Bell, LogIn } from "lucide-react";
 
 import { SetGameMusicTrack, useGameAudio } from "@/contexts/game-audio-context";
@@ -32,7 +32,22 @@ function Index() {
   const [brightness, setBrightness] = useState([80]);
   const [volumeSlider, setVolumeSlider] = useState([Math.round(volume * 100)]);
   const [notifications, setNotifications] = useState(true);
-  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("keepLoggedIn") === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const isKeepActive = localStorage.getItem("keepLoggedIn") === "true";
+      const hasSession = localStorage.getItem("authUser");
+      if (isKeepActive && hasSession) {
+        navigate({ to: "/jugar" });
+      }
+    }
+  }, [navigate]);
 
   return (
     <>
@@ -52,7 +67,14 @@ function Index() {
 
       <div className="flex flex-col items-center gap-4 pb-6">
         <button
-          onClick={() => navigate({ to: "/login" })}
+          onClick={() => {
+            const hasSession = localStorage.getItem("authUser") || sessionStorage.getItem("authUser");
+            if (hasSession) {
+              navigate({ to: "/jugar" });
+            } else {
+              navigate({ to: "/login" });
+            }
+          }}
           className="flex items-center gap-3 rounded-2xl bg-pink-600 px-16 py-4 text-xl font-semibold text-white shadow-lg transition hover:bg-pink-700 active:scale-95"
         >
           Viajar <Play className="h-5 w-5 fill-white" />
@@ -125,7 +147,14 @@ function Index() {
               <Label htmlFor="keep" className="flex items-center gap-2 text-sm font-bold text-gray-700">
                 <LogIn className="h-4 w-4 text-pink-600" /> Mantener sesión iniciada
               </Label>
-              <Switch id="keep" checked={keepLoggedIn} onCheckedChange={setKeepLoggedIn} />
+              <Switch
+                id="keep"
+                checked={keepLoggedIn}
+                onCheckedChange={(checked) => {
+                  setKeepLoggedIn(checked);
+                  localStorage.setItem("keepLoggedIn", String(checked));
+                }}
+              />
             </div>
           </div>
         </DialogContent>

@@ -22,6 +22,8 @@ interface User {
   username?: string;
   email: string;
   passwordHash: string;
+  purchasedOutfits?: string[];
+  equippedOutfit?: string | null;
 }
 
 function normalizeEmail(email: string) {
@@ -117,10 +119,12 @@ export const registerUser = createServerFn({ method: "POST" })
       username,
       email,
       passwordHash: hashPassword(data.password),
+      purchasedOutfits: [],
+      equippedOutfit: null,
     });
     await saveUsers(users);
 
-    return { success: true, user: { username, email } };
+    return { success: true, user: { username, email, purchasedOutfits: [], equippedOutfit: null } };
   });
 
 export const loginUser = createServerFn({ method: "POST" })
@@ -144,6 +148,8 @@ export const loginUser = createServerFn({ method: "POST" })
       user: {
         username: user.username || email.split("@")[0],
         email,
+        purchasedOutfits: Array.isArray(user.purchasedOutfits) ? user.purchasedOutfits : [],
+        equippedOutfit: typeof user.equippedOutfit === "string" ? user.equippedOutfit : null,
       },
     };
   });
@@ -313,6 +319,8 @@ export const resetPassword = createServerFn({ method: "POST" })
       user: {
         username: users[userIndex].username || email.split("@")[0],
         email,
+        purchasedOutfits: Array.isArray(users[userIndex].purchasedOutfits) ? users[userIndex].purchasedOutfits : [],
+        equippedOutfit: typeof users[userIndex].equippedOutfit === "string" ? users[userIndex].equippedOutfit : null,
       },
     };
   });
