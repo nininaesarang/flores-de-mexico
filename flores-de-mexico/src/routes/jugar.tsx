@@ -455,6 +455,16 @@ function JugarPage() {
   const [categories, setCategories] = useState<Category[]>(CATEGORIES_DATA);
   const [selectedShopCategory, setSelectedShopCategory] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const authUser = localStorage.getItem("authUser") || sessionStorage.getItem("authUser");
+    if (!authUser) {
+      toast.error("Inicia sesión para jugar.");
+      navigate({ to: "/login" });
+    }
+  }, [navigate]);
+
   const renderNavButton = (tab: "jugar" | "coleccion" | "tienda" | "perfil", Icon: any, label: string) => {
     const isActive = activeTab === tab;
     return (
@@ -533,7 +543,10 @@ function JugarPage() {
   // User profile states
   const [usernameState, setUsernameState] = useState(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("username");
+      const hasTemporarySession = sessionStorage.getItem("authUser") && !localStorage.getItem("authUser");
+      const saved = hasTemporarySession
+        ? sessionStorage.getItem("username")
+        : localStorage.getItem("username") || sessionStorage.getItem("username");
       return saved ? saved.replace(/@/g, "") : "explorador_botanico";
     }
     return "explorador_botanico";
@@ -587,7 +600,11 @@ function JugarPage() {
     }
     setUsernameState(cleaned);
     setAvatarState(tempAvatar);
-    localStorage.setItem("username", cleaned);
+    if (sessionStorage.getItem("authUser") && !localStorage.getItem("authUser")) {
+      sessionStorage.setItem("username", cleaned);
+    } else {
+      localStorage.setItem("username", cleaned);
+    }
     localStorage.setItem("avatar", tempAvatar);
     setProfileEditOpen(false);
   };
@@ -1916,7 +1933,13 @@ function JugarPage() {
                 </button>
 
                 <button
-                  onClick={() => navigate({ to: "/" })}
+                  onClick={() => {
+                    localStorage.removeItem("authUser");
+                    localStorage.removeItem("username");
+                    sessionStorage.removeItem("authUser");
+                    sessionStorage.removeItem("username");
+                    navigate({ to: "/login" });
+                  }}
                   className="flex w-full items-center justify-center gap-1.5 rounded-full bg-rose-500 py-2.5 text-xs font-bold text-white transition hover:bg-rose-600"
                 >
                   <LogOut className="h-4 w-4" />

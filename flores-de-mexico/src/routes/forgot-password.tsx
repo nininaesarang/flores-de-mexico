@@ -32,7 +32,7 @@ function ForgotPasswordPage() {
       toast.success("Enlace de recuperación enviado.");
     } catch (error) {
       console.error(error);
-      toast.error("Ocurrió un error al enviar el correo. Inténtalo de nuevo.");
+      toast.error(error instanceof Error ? error.message : "Ocurrió un error al enviar el correo. Inténtalo de nuevo.");
     } finally {
       setLoading(false);
     }

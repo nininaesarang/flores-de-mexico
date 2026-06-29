@@ -80,15 +80,20 @@ function ResetPasswordPage() {
 
     setSubmitting(true);
     try {
-      await resetPassword({
+      const response = await resetPassword({
         data: {
           email,
           token,
           password,
         },
       });
+      localStorage.setItem("authUser", JSON.stringify(response.user));
+      localStorage.setItem("username", response.user.username);
+      sessionStorage.removeItem("authUser");
+      sessionStorage.removeItem("username");
       setSuccess(true);
       toast.success("Contraseña restablecida exitosamente.");
+      navigate({ to: "/jugar" });
     } catch (err: any) {
       console.error(err);
       toast.error(err?.message || "Ocurrió un error al restablecer la contraseña.");

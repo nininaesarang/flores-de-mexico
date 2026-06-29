@@ -24,6 +24,30 @@ interface User {
   passwordHash: string;
 }
 
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
+function hashPassword(password: string) {
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(password, salt, 100_000, 64, "sha512").toString("hex");
+  return `${hash}:${salt}`;
+}
+
+function verifyPassword(password: string, passwordHash: string) {
+  const [storedHash, salt] = passwordHash.split(":");
+  if (!storedHash || !salt) return false;
+
+  const storedBuffer = Buffer.from(storedHash, "hex");
+  const currentHash = crypto.pbkdf2Sync(password, salt, 100_000, 64, "sha512").toString("hex");
+  const legacyHash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+
+  return [currentHash, legacyHash].some((hash) => {
+    const hashBuffer = Buffer.from(hash, "hex");
+    return hashBuffer.length === storedBuffer.length && crypto.timingSafeEqual(hashBuffer, storedBuffer);
+  });
+}
+
 // Helper to ensure data directory exists
 async function ensureDataDir() {
   try {
@@ -67,11 +91,74 @@ async function saveUsers(users: User[]): Promise<void> {
   await fs.writeFile(USERS_FILE, JSON.stringify(users, null, 2), "utf-8");
 }
 
+export const registerUser = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      username: z.string().min(2).max(30),
+      email: z.string().email(),
+      password: z.string().min(6),
+    })
+  )
+  .handler(async ({ data }) => {
+    const email = normalizeEmail(data.email);
+    const username = data.username.replace(/@/g, "").trim();
+
+    if (!username) {
+      throw new Error("Ingresa un nombre de usuario válido.");
+    }
+
+    const users = await loadUsers();
+    const emailTaken = users.some((user) => normalizeEmail(user.email) === email);
+    if (emailTaken) {
+      throw new Error("Ya existe una cuenta registrada con ese correo.");
+    }
+
+    users.push({
+      username,
+      email,
+      passwordHash: hashPassword(data.password),
+    });
+    await saveUsers(users);
+
+    return { success: true, user: { username, email } };
+  });
+
+export const loginUser = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+      password: z.string().min(1),
+    })
+  )
+  .handler(async ({ data }) => {
+    const email = normalizeEmail(data.email);
+    const users = await loadUsers();
+    const user = users.find((item) => normalizeEmail(item.email) === email);
+
+    if (!user || !verifyPassword(data.password, user.passwordHash)) {
+      throw new Error("Correo o contraseña incorrectos.");
+    }
+
+    return {
+      success: true,
+      user: {
+        username: user.username || email.split("@")[0],
+        email,
+      },
+    };
+  });
+
 // Server Function: Send Password Reset Email
 export const sendPasswordResetEmail = createServerFn({ method: "POST" })
   .inputValidator(z.object({ email: z.string().email() }))
   .handler(async ({ data }) => {
-    const { email } = data;
+    const email = normalizeEmail(data.email);
+
+    const users = await loadUsers();
+    const user = users.find((item) => normalizeEmail(item.email) === email);
+    if (!user) {
+      throw new Error("No existe una cuenta registrada con ese correo.");
+    }
 
     // 1. Generate a secure random token
     const token = crypto.randomBytes(32).toString("hex");
@@ -82,7 +169,7 @@ export const sendPasswordResetEmail = createServerFn({ method: "POST" })
     // 2. Save the reset request
     const resets = await loadResets();
     // Remove previous resets for this email to avoid duplicates
-    const filteredResets = resets.filter((r) => r.email.toLowerCase() !== email.toLowerCase());
+    const filteredResets = resets.filter((r) => normalizeEmail(r.email) !== email);
     filteredResets.push({ email, token, expiresAt });
     await saveResets(filteredResets);
 
@@ -150,11 +237,18 @@ export const sendPasswordResetEmail = createServerFn({ method: "POST" })
 export const verifyResetToken = createServerFn({ method: "POST" })
   .inputValidator(z.object({ email: z.string().email(), token: z.string().min(1) }))
   .handler(async ({ data }) => {
-    const { email, token } = data;
+    const email = normalizeEmail(data.email);
+    const { token } = data;
+
+    const users = await loadUsers();
+    const user = users.find((item) => normalizeEmail(item.email) === email);
+    if (!user) {
+      return { valid: false, message: "No existe una cuenta registrada con ese correo." };
+    }
 
     const resets = await loadResets();
     const request = resets.find(
-      (r) => r.email.toLowerCase() === email.toLowerCase() && r.token === token
+      (r) => normalizeEmail(r.email) === email && r.token === token
     );
 
     if (!request) {
@@ -179,12 +273,13 @@ export const resetPassword = createServerFn({ method: "POST" })
     })
   )
   .handler(async ({ data }) => {
-    const { email, token, password } = data;
+    const email = normalizeEmail(data.email);
+    const { token, password } = data;
 
     // 1. Verify token again on the server side
     const resets = await loadResets();
     const requestIndex = resets.findIndex(
-      (r) => r.email.toLowerCase() === email.toLowerCase() && r.token === token
+      (r) => normalizeEmail(r.email) === email && r.token === token
     );
 
     if (requestIndex === -1) {
@@ -197,26 +292,15 @@ export const resetPassword = createServerFn({ method: "POST" })
       throw new Error("El enlace de recuperación ha expirado.");
     }
 
-    // 2. Simulate database update
-    // Update or create user in users.json
+    // 2. Update the registered user's password
     const users = await loadUsers();
-    const userIndex = users.findIndex((u) => u.email.toLowerCase() === email.toLowerCase());
+    const userIndex = users.findIndex((u) => normalizeEmail(u.email) === email);
 
-    // Simple password hashing simulation (in a real production app we would use bcrypt/argon2,
-    // but for mock file DB, saving it directly or simple hash is fine)
-    const salt = crypto.randomBytes(16).toString("hex");
-    const passwordHash = crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex") + ":" + salt;
-
-    if (userIndex !== -1) {
-      users[userIndex].passwordHash = passwordHash;
-    } else {
-      // Create user if they reset password but didn't exist in our mock db
-      users.push({
-        email: email.toLowerCase(),
-        passwordHash,
-        username: email.split("@")[0], // default username
-      });
+    if (userIndex === -1) {
+      throw new Error("No existe una cuenta registrada con ese correo.");
     }
+
+    users[userIndex].passwordHash = hashPassword(password);
     await saveUsers(users);
 
     // 3. Remove the reset token so it can't be used again
@@ -224,5 +308,11 @@ export const resetPassword = createServerFn({ method: "POST" })
     await saveResets(resets);
 
     console.log(`[Auth Server] Contraseña restablecida exitosamente para ${email}`);
-    return { success: true };
+    return {
+      success: true,
+      user: {
+        username: users[userIndex].username || email.split("@")[0],
+        email,
+      },
+    };
   });
