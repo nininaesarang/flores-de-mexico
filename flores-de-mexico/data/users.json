@@ -8,5 +8,26 @@
     "username": "tester",
     "email": "tester@example.com",
     "passwordHash": "ddf2ba9baf26aef6348fde30078f10c85ddaa9b40a436439f2d876a9f43ae9bd2c0365a4965bba7cc199791ae418e48e26ea3f891403ea2b6aee7238cea53d49:c8fddf826556b25b009a7432230d0fe7"
+  },
+  {
+    "username": "mary",
+    "email": "maryjose.martinez.22isc@tecsanpedro.edu.mx",
+    "passwordHash": "072c5941e067bc8b6f3d776d30b23a1a7fba0e6a0143084b7c0fdeaffd63989db918b21225a371621e9a56de880e0b1b887b4cb2515170f142b443312050d442:7fcf9d6a94e0f10a62ff73265b0f50b4",
+    "purchasedOutfits": [],
+    "equippedOutfit": null
+  },
+  {
+    "username": "Falling",
+    "email": "takafallingjin@gmail.com",
+    "passwordHash": "400f697c7cbf94fdedc2a316e70ad2252d4df87a51aeb72f69e32a61bb48a5e10d84a3287f15fb2c4c43caf0aaec289005f581c6d18a099044a7d2c3e84d9133:771c6f012efd0a75f36e4fce533084af",
+    "purchasedOutfits": [],
+    "equippedOutfit": null
+  },
+  {
+    "username": "Luna",
+    "email": "hdz107504@gmail.com",
+    "passwordHash": "dd5eb2b936aeda3324400698fd9361f57832a0d474edc9c79ae16797fe471b8ce825dcd0a4f8c570b0307d7cda8c2fa93ea75820ba2c7beb69b5fec986d09763:2eda0859ed0f005c29d328738d14eca0",
+    "purchasedOutfits": [],
+    "equippedOutfit": null
   }
 ]

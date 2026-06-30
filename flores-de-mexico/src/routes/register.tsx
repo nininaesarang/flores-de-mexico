@@ -57,6 +57,17 @@ function RegisterPage() {
       localStorage.setItem("username", response.user.username);
       sessionStorage.removeItem("authUser");
       sessionStorage.removeItem("username");
+      
+      // Clean previous user game progression keys
+      localStorage.removeItem("isMuseoMaderoUnlocked");
+      localStorage.removeItem("visitedMunicipalityIds");
+      localStorage.removeItem("municipiosDescubiertos");
+      localStorage.removeItem("xp");
+      localStorage.removeItem("unlockedStickers");
+      localStorage.removeItem("coins");
+      localStorage.removeItem("energy");
+      localStorage.removeItem("energyTimerStart");
+
       toast.success("Cuenta registrada. ¡Bienvenido!");
       navigate({ to: "/jugar" });
     } catch (error) {

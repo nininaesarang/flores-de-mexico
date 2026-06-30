@@ -534,7 +534,25 @@ function JugarPage() {
   const [activeTab, setActiveTab] = useState<"jugar" | "coleccion" | "tienda" | "perfil">("jugar");
   const [selectedState, setSelectedState] = useState(STATES_DATA[0]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categories, setCategories] = useState<Category[]>(CATEGORIES_DATA);
+  const [categories, setCategories] = useState<Category[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("unlockedStickers");
+      if (stored) {
+        try {
+          const unlockedIds = JSON.parse(stored) as string[];
+          return CATEGORIES_DATA.map(c => ({
+            ...c,
+            items: c.items.map(i =>
+              unlockedIds.includes(i.id) ? { ...i, unlocked: true } : i
+            )
+          }));
+        } catch (e) {
+          console.error("Error loading unlocked stickers:", e);
+        }
+      }
+    }
+    return CATEGORIES_DATA;
+  });
   const [selectedShopCategory, setSelectedShopCategory] = useState<string | null>(null);
   const [purchasedOutfits, setPurchasedOutfits] = useState<string[]>(() => getStoredUserCosmetics().purchasedOutfits);
   const [equippedOutfit, setEquippedOutfit] = useState<string | null>(() => getStoredUserCosmetics().equippedOutfit);
@@ -699,8 +717,76 @@ function JugarPage() {
   };
 
   // Currency & Energy State
-  const [energy, setEnergy] = useState(5);
-  const [coins, setCoins] = useState(1250);
+  const [energy, setEnergy] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("energy");
+      return stored !== null ? Number(stored) : 5;
+    }
+    return 5;
+  });
+  const [coins, setCoins] = useState(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("coins");
+      return stored !== null ? Number(stored) : 1250;
+    }
+    return 1250;
+  });
+
+  const [isFirstTimeCompletion, setIsFirstTimeCompletion] = useState(false);
+  const [refillSeconds, setRefillSeconds] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const REFILL_INTERVAL = 300; // 5 minutes in seconds
+
+    const tick = () => {
+      const storedEnergy = localStorage.getItem("energy");
+      let curEnergy = storedEnergy !== null ? Number(storedEnergy) : 5;
+
+      if (curEnergy >= 10) {
+        setRefillSeconds(null);
+        localStorage.removeItem("energyTimerStart");
+        return;
+      }
+
+      const now = Date.now();
+      let timerStartStr = localStorage.getItem("energyTimerStart");
+      let timerStart = timerStartStr ? Number(timerStartStr) : now;
+
+      if (!timerStartStr) {
+        localStorage.setItem("energyTimerStart", String(now));
+      }
+
+      const elapsedSeconds = Math.floor((now - timerStart) / 1000);
+      const recovered = Math.floor(elapsedSeconds / REFILL_INTERVAL);
+
+      if (recovered > 0) {
+        const newEnergy = Math.min(10, curEnergy + recovered);
+        curEnergy = newEnergy;
+        setEnergy(newEnergy);
+        localStorage.setItem("energy", String(newEnergy));
+
+        if (newEnergy >= 10) {
+          setRefillSeconds(null);
+          localStorage.removeItem("energyTimerStart");
+          return;
+        } else {
+          const newTimerStart = timerStart + recovered * REFILL_INTERVAL * 1000;
+          localStorage.setItem("energyTimerStart", String(newTimerStart));
+          timerStart = newTimerStart;
+        }
+      }
+
+      const currentElapsed = Math.floor((Date.now() - timerStart) / 1000);
+      const remaining = Math.max(0, REFILL_INTERVAL - currentElapsed);
+      setRefillSeconds(remaining);
+    };
+
+    tick();
+    const intervalId = setInterval(tick, 1000);
+    return () => clearInterval(intervalId);
+  }, [energy]);
 
   // Settings Dialog State
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -817,6 +903,40 @@ function JugarPage() {
     return 0;
   });
 
+  const [xp, setXp] = useState<number>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("xp");
+      return stored ? parseInt(stored, 10) : 0;
+    }
+    return 0;
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const unlockedIds = categories.flatMap(c => c.items.filter(i => i.unlocked).map(i => i.id));
+      localStorage.setItem("unlockedStickers", JSON.stringify(unlockedIds));
+    }
+  }, [categories]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("coins", String(coins));
+    }
+  }, [coins]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("energy", String(energy));
+    }
+  }, [energy]);
+
+  const unlockedCategoriesStickersCount = categories.reduce(
+    (acc, cat) => acc + cat.items.filter(item => item.unlocked).length,
+    0
+  );
+  const totalStickersCount = (isMuseoMaderoUnlocked ? 1 : 0) + unlockedCategoriesStickersCount;
+  const completionPercentage = isMuseoMaderoUnlocked ? (1 / 32) * 100 : 0;
+
   const visualNovelDialogue = [
     "¡Hola explorador! Te doy la bienvenida a San Pedro, Coahuila. Aquí se encuentra el histórico Museo Madero. 🌸",
     "Francisco I. Madero vivió aquí y escribió gran parte de su célebre libro 'La Sucesión Presidencial'. ¡San Pedro es el origen y cuna de la Revolución! 🍇",
@@ -917,6 +1037,13 @@ function JugarPage() {
   };
 
   const handleStartGame = () => {
+    if (selectedState.id !== "san-pedro") {
+      toast.info("Aun no se ha integrado ese municipio al juego, sigue esperando a más actualizaciones", {
+        description: "¡Pronto habrá más destinos!"
+      });
+      return;
+    }
+
     if (energy > 0) {
       setEnergy((prev) => prev - 1);
       setVisualNovelStep(0);
@@ -961,13 +1088,20 @@ function JugarPage() {
   return (
     <>
       <SetGameMusicTrack track={isGameActive ? "visual-novel" : "hub"} />
-    <div className="relative flex min-h-screen flex-col items-center justify-between bg-[#fcf9f5] font-sans antialiased">
+    <div className="relative flex h-screen max-h-screen flex-col items-center justify-between bg-[#fcf9f5] font-sans antialiased overflow-hidden">
       {/* Top Bar Indicators */}
-      <header className="flex w-full max-w-md items-center justify-between px-6 pt-5">
+      <header className="flex w-full max-w-md items-center justify-between px-6 pt-5 flex-shrink-0">
         {/* Energy Ticket Badge */}
-        <div className="flex items-center gap-2 rounded-full border border-teal-500 bg-white px-3 py-1.5 shadow-sm">
-          <Ticket className="h-5 w-5 fill-teal-400 text-teal-600" />
-          <span className="text-sm font-extrabold text-teal-800">{energy} / 10</span>
+        <div className="flex items-center gap-2 rounded-full border border-teal-500 bg-white px-3 py-1.5 shadow-sm min-h-[38px]">
+          <Ticket className="h-5 w-5 fill-teal-400 text-teal-600 flex-shrink-0" />
+          <div className="flex flex-col items-start leading-none">
+            <span className="text-xs font-black text-teal-800">{energy} / 10</span>
+            {refillSeconds !== null && refillSeconds > 0 && (
+              <span className="text-[8px] font-black text-teal-500 tracking-wider mt-0.5 animate-pulse">
+                {(refillSeconds / 60 | 0)}:{(refillSeconds % 60).toString().padStart(2, "0")}
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Currency MXN Badge */}
@@ -980,11 +1114,11 @@ function JugarPage() {
       </header>
 
       {/* Main Content Area based on Selected Tab */}
-      <main className="w-full max-w-md flex-1 px-6 py-4">
+      <main className="w-full max-w-md flex-1 px-6 py-4 overflow-y-auto scrollbar-none flex flex-col">
         {activeTab === "jugar" && (
           isGameActive ? (
             /* Visual Novel Screen */
-            <div className="relative w-full h-[520px] rounded-3xl overflow-hidden border-2 border-pink-300 bg-[#f7f1ea] shadow-lg animate-fade-in">
+            <div className="relative w-full flex-1 rounded-3xl overflow-hidden border-2 border-pink-300 bg-[#f7f1ea] shadow-lg animate-fade-in">
               {/* Blurred background image */}
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-all duration-500 scale-110 filter blur-[4px] opacity-90"
@@ -1008,26 +1142,7 @@ function JugarPage() {
                 className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[82%] object-contain select-none z-10 pointer-events-none drop-shadow-[0_4px_8px_rgba(0,0,0,0.2)] animate-fade-in-slide-up"
               />
 
-              {/* Floating Action Buttons: Camera and Book */}
-              <div className="absolute right-4 bottom-28 z-20 flex flex-col gap-3">
-                {/* Book / Diary Button */}
-                <button
-                  onClick={() => setGuidebookOpen(true)}
-                  aria-label="Diario de viaje de Coahuila"
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fdfaf6] border-2 border-pink-200 shadow-lg text-pink-600 transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                >
-                  <BookOpen className="h-5.5 w-5.5" />
-                </button>
 
-                {/* Camera / Save photo Button */}
-                <button
-                  onClick={handleDownloadBackground}
-                  aria-label="Guardar foto de fondo"
-                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#fdfaf6] border-2 border-pink-200 shadow-lg text-pink-600 transition-all hover:scale-110 active:scale-95 cursor-pointer"
-                >
-                  <Camera className="h-5.5 w-5.5" />
-                </button>
-              </div>
 
               {/* Lonche Image Fullscreen Overlay */}
               {showLoncheImage && (
@@ -1082,9 +1197,18 @@ function JugarPage() {
                       setVisualNovelStep(0);
                       setIsGameActive(false);
 
-                      // Unlock Museo Madero
+                      // Unlock Museo Madero and determine if it's the first time
+                      const firstTime = !isMuseoMaderoUnlocked;
+                      setIsFirstTimeCompletion(firstTime);
+
                       setIsMuseoMaderoUnlocked(true);
                       localStorage.setItem("isMuseoMaderoUnlocked", "true");
+
+                      // Award 100 XP if not already completed
+                      if (firstTime) {
+                        setXp(100);
+                        localStorage.setItem("xp", "100");
+                      }
 
                       // Track unique municipalities visited so replays do not inflate the counter.
                       setVisitedMunicipalityIds(prev => {
@@ -1116,8 +1240,10 @@ function JugarPage() {
                         })
                       );
 
-                      // Award coins
-                      setCoins(prev => prev + 100);
+                      // Award coins only if first time
+                      if (firstTime) {
+                        setCoins(prev => prev + 100);
+                      }
 
                       // Trigger Completed Overlay
                       setLevelCompletedOverlayOpen(true);
@@ -1131,6 +1257,33 @@ function JugarPage() {
                 <span className="absolute -top-3 left-4 rounded-full bg-pink-700 px-3 py-0.5 text-[9px] font-black text-white uppercase tracking-wider shadow-sm">
                   COAHUILA
                 </span>
+
+                {/* Floating Action Buttons: Camera and Book (placed together O O at the top right of the dialogue box) */}
+                <div className="absolute -top-4.5 right-4 z-30 flex gap-2">
+                  {/* Book / Diary Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGuidebookOpen(true);
+                    }}
+                    aria-label="Diario de viaje de Coahuila"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fdfaf6] border-2 border-pink-200 shadow-md text-pink-600 transition-all hover:scale-110 active:scale-95 cursor-pointer animate-none"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                  </button>
+
+                  {/* Camera / Save photo Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownloadBackground();
+                    }}
+                    aria-label="Guardar foto de fondo"
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-[#fdfaf6] border-2 border-pink-200 shadow-md text-pink-600 transition-all hover:scale-110 active:scale-95 cursor-pointer animate-none"
+                  >
+                    <Camera className="h-4 w-4" />
+                  </button>
+                </div>
 
                 <p className="text-xs md:text-sm font-extrabold text-gray-800 leading-relaxed min-h-[50px] flex items-center pr-4">
                   "{typedText}"
@@ -2146,7 +2299,7 @@ function JugarPage() {
                     <p className="text-[10px] text-gray-400 font-semibold">5,000 MXN Monedas</p>
                   </div>
                   <button
-                    onClick={() => toast.success("¡Bolsa de monedas comprada!", { description: "Se han agregado 5,000 MXN a tu saldo." })}
+                    onClick={() => toast.info("función aún no implementada")}
                     className="flex-shrink-0 rounded-xl bg-[#1aab6d] px-4 py-2 text-xs font-black text-white shadow hover:bg-[#159959] transition"
                   >
                     $1.99
@@ -2163,7 +2316,7 @@ function JugarPage() {
                     <p className="text-[10px] text-gray-400 font-semibold">Viaja de manera ilimitada por 24hrs</p>
                   </div>
                   <button
-                    onClick={() => { setEnergy(10); toast.success("¡Boleto Dorado activado!", { description: "Tienes energía ilimitada por 24 horas." }); }}
+                    onClick={() => toast.info("función aún no implementada")}
                     className="flex-shrink-0 rounded-xl bg-[#d80073] px-4 py-2 text-xs font-black text-white shadow hover:bg-[#b5005e] transition"
                   >
                     $4.99
@@ -2199,13 +2352,13 @@ function JugarPage() {
                 {/* Name and Level */}
                 <div className="flex flex-col items-start gap-1">
                   <span className="rounded-full bg-teal-500 text-[10px] font-black text-white px-2.5 py-0.5 shadow-sm uppercase tracking-wide">
-                    NIVEL 4
+                    NIVEL 1
                   </span>
                   <h2 className="text-base font-extrabold text-gray-800 leading-tight">
                     {usernameState}
                   </h2>
                   <p className="text-xs text-teal-600 font-extrabold uppercase tracking-wide">
-                    Explorador Regional
+                    Explorador Newbie
                   </p>
                 </div>
               </div>
@@ -2214,29 +2367,38 @@ function JugarPage() {
               <div className="mt-4 space-y-1">
                 <div className="flex justify-between text-[10px] font-black text-gray-400">
                   <span>EXP DE VIAJE</span>
-                  <span>450 / 1000 XP</span>
+                  <span>{xp} / 1000 XP</span>
                 </div>
                 <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
-                  <div className="h-full w-[45%] bg-teal-500 rounded-full" />
+                  <div 
+                    style={{ width: `${(xp / 1000) * 100}%` }}
+                    className="h-full bg-teal-500 rounded-full transition-all duration-500" 
+                  />
                 </div>
               </div>
 
               {/* Statistics grid */}
               <div className="grid grid-cols-3 gap-2 mt-5 py-3 border-y border-dashed border-pink-100">
                 <div className="text-center">
-                  <div className="text-lg font-black text-pink-600">32%</div>
+                  <div className="text-lg font-black text-pink-600">
+                    {completionPercentage.toFixed(3)}%
+                  </div>
                   <div className="text-[9px] font-black tracking-wider text-gray-400 uppercase">
                     COMPLETO
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-black text-teal-600">12</div>
+                  <div className="text-lg font-black text-teal-600">
+                    {isMuseoMaderoUnlocked ? 1 : 0}
+                  </div>
                   <div className="text-[9px] font-black tracking-wider text-gray-400 uppercase">
                     NIVELES COMPLETADOS
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-lg font-black text-amber-600">5</div>
+                  <div className="text-lg font-black text-amber-600">
+                    {totalStickersCount}
+                  </div>
                   <div className="text-[9px] font-black tracking-wider text-gray-400 uppercase">
                     STICKERS
                   </div>
@@ -2257,7 +2419,7 @@ function JugarPage() {
                   <p className="text-[11px] text-gray-500 font-semibold mt-1">
                     Última parada:{" "}
                     <span className="font-extrabold text-[#705800]">
-                      Saltillo, Coahuila
+                      {isMuseoMaderoUnlocked ? "San Pedro, Coahuila" : "Ninguna"}
                     </span>
                   </p>
                 </div>
@@ -2298,12 +2460,14 @@ function JugarPage() {
       </main>
 
       {/* Bottom Navigation Bar */}
-      <nav className="w-full max-w-md bg-white border-t border-gray-100 py-3.5 px-6 flex justify-between items-center shadow-lg rounded-t-3xl min-h-[76px]">
-        {renderNavButton("coleccion", Box, "Colección")}
-        {renderNavButton("jugar", Gamepad2, "Jugar")}
-        {renderNavButton("tienda", ShoppingBag, "Tienda")}
-        {renderNavButton("perfil", User, "Perfil")}
-      </nav>
+      {!isGameActive && (
+        <nav className="w-full max-w-md bg-white border-t border-gray-100 py-3.5 px-6 flex justify-between items-center shadow-lg rounded-t-3xl min-h-[76px] flex-shrink-0">
+          {renderNavButton("coleccion", Box, "Colección")}
+          {renderNavButton("jugar", Gamepad2, "Jugar")}
+          {renderNavButton("tienda", ShoppingBag, "Tienda")}
+          {renderNavButton("perfil", User, "Perfil")}
+        </nav>
+      )}
 
       {/* Settings Dialog (Cyan button) */}
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
@@ -2776,57 +2940,74 @@ function JugarPage() {
             {/* Confetti emoji header */}
             <div className="text-5xl animate-bounce">🎉✨🏆</div>
             
-            <div className="space-y-1">
-              <h2 className="text-2xl font-black text-pink-700 tracking-tight">
-                ¡Nivel Completado!
-              </h2>
-              <p className="text-xs font-bold text-gray-500">
-                Expedición en San Pedro, Coahuila
-              </p>
-            </div>
-
-            {/* Unlocked Stickers Showcase */}
-            <div className="space-y-3">
-              <p className="text-xs font-extrabold text-teal-800">
-                ¡Has desbloqueado 2 nuevos stickers!
-              </p>
-              
-              <div className="grid grid-cols-2 gap-4">
-                {/* Sticker 1: Museo Madero */}
-                <div className="flex flex-col items-center bg-white border-2 border-pink-200 rounded-2xl p-2.5 shadow-sm animate-pulse">
-                  <span className="rounded-full bg-pink-100 px-2 py-0.5 text-[8px] font-black text-pink-700 uppercase tracking-wide mb-1.5">
-                    Histórico
-                  </span>
-                  <div className="aspect-square w-full rounded-xl bg-pink-50/50 p-1.5 flex items-center justify-center">
-                    <img src="/museo-madero.png" alt="Museo Madero" className="h-16 w-auto object-contain" />
-                  </div>
-                  <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
-                    Museo Madero
-                  </span>
+            {isFirstTimeCompletion ? (
+              <>
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-pink-700 tracking-tight">
+                    ¡Nivel Completado!
+                  </h2>
+                  <p className="text-xs font-bold text-gray-500">
+                    Expedición en San Pedro, Coahuila
+                  </p>
                 </div>
 
-                {/* Sticker 2: Lonche Lagunero */}
-                <div className="flex flex-col items-center bg-white border-2 border-pink-200 rounded-2xl p-2.5 shadow-sm animate-pulse">
-                  <span className="rounded-full bg-pink-100 px-2 py-0.5 text-[8px] font-black text-pink-700 uppercase tracking-wide mb-1.5">
-                    Regional
-                  </span>
-                  <div className="aspect-square w-full rounded-xl bg-pink-50/50 p-1.5 flex items-center justify-center">
-                    <img src="/sticker-lonche.png" alt="Lonche" className="h-16 w-auto object-contain" />
+                {/* Unlocked Stickers Showcase */}
+                <div className="space-y-3">
+                  <p className="text-xs font-extrabold text-teal-800">
+                    ¡Has desbloqueado 2 nuevos stickers!
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Sticker 1: Museo Madero */}
+                    <div className="flex flex-col items-center bg-white border-2 border-pink-200 rounded-2xl p-2.5 shadow-sm animate-pulse">
+                      <span className="rounded-full bg-pink-100 px-2 py-0.5 text-[8px] font-black text-pink-700 uppercase tracking-wide mb-1.5">
+                        Histórico
+                      </span>
+                      <div className="aspect-square w-full rounded-xl bg-pink-50/50 p-1.5 flex items-center justify-center">
+                        <img src="/museo-madero.png" alt="Museo Madero" className="h-16 w-auto object-contain" />
+                      </div>
+                      <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                        Museo Madero
+                      </span>
+                    </div>
+
+                    {/* Sticker 2: Lonche Lagunero */}
+                    <div className="flex flex-col items-center bg-white border-2 border-pink-200 rounded-2xl p-2.5 shadow-sm animate-pulse">
+                      <span className="rounded-full bg-pink-100 px-2 py-0.5 text-[8px] font-black text-pink-700 uppercase tracking-wide mb-1.5">
+                        Regional
+                      </span>
+                      <div className="aspect-square w-full rounded-xl bg-pink-50/50 p-1.5 flex items-center justify-center">
+                        <img src="/sticker-lonche.png" alt="Lonche" className="h-16 w-auto object-contain" />
+                      </div>
+                      <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
+                        Lonche Lagunero
+                      </span>
+                    </div>
                   </div>
-                  <span className="text-[10px] font-black text-gray-700 mt-2 truncate max-w-full text-center">
-                    Lonche Lagunero
-                  </span>
                 </div>
+
+                {/* Rewards: coins and experience */}
+                <div className="flex flex-col gap-2 items-center">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border-2 border-amber-300 px-4 py-1.5">
+                    <Coins className="h-4 w-4 fill-amber-400 text-amber-600 animate-spin" />
+                    <span className="text-xs font-black text-amber-800">
+                      +100 MXN Monedas
+                    </span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-teal-50 border-2 border-teal-300 px-4 py-1.5">
+                    <span className="text-xs font-black text-teal-800">
+                      ✨ +100 XP de Experiencia
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="py-4">
+                <h2 className="text-xl font-black text-pink-700 tracking-tight">
+                  Felicidades, ya pasaste este nivel
+                </h2>
               </div>
-            </div>
-
-            {/* Coins / Reward indicator */}
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border-2 border-amber-300 px-4 py-1.5">
-              <Coins className="h-4 w-4 fill-amber-400 text-amber-600 animate-spin" />
-              <span className="text-xs font-black text-amber-800">
-                +100 MXN Monedas
-              </span>
-            </div>
+            )}
 
             {/* Dismiss Hint */}
             <div className="text-[10px] font-black text-pink-600 animate-pulse pt-2">
