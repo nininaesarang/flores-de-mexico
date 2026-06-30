@@ -12,4 +12,9 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  vite: {
+    server: {
+      allowedHosts: [".ts.net", "localhost", "127.0.0.1"],
+    },
+  },
 });
