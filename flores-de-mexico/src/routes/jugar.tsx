@@ -34,6 +34,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { SetGameMusicTrack, useGameAudio } from "@/contexts/game-audio-context";
+import { updateUserCosmetics } from "../lib/api/auth.functions";
 
 export const Route = createFileRoute("/jugar")({
   head: () => ({
@@ -568,13 +569,29 @@ function JugarPage() {
     }
   }, [navigate]);
 
-  const updateCosmetics = (nextPurchasedOutfits: string[], nextEquippedOutfit: string | null) => {
+  const updateCosmetics = async (nextPurchasedOutfits: string[], nextEquippedOutfit: string | null) => {
     setPurchasedOutfits(nextPurchasedOutfits);
     setEquippedOutfit(nextEquippedOutfit);
     saveStoredUserCosmetics({
       purchasedOutfits: nextPurchasedOutfits,
       equippedOutfit: nextEquippedOutfit,
     });
+
+    try {
+      const storedAuthUser = localStorage.getItem("authUser") || sessionStorage.getItem("authUser");
+      if (storedAuthUser) {
+        const user = JSON.parse(storedAuthUser);
+        if (user && user.email) {
+          await updateUserCosmetics({
+            email: user.email,
+            purchasedOutfits: nextPurchasedOutfits,
+            equippedOutfit: nextEquippedOutfit,
+          });
+        }
+      }
+    } catch (e) {
+      console.error("Error syncing cosmetics to server:", e);
+    }
   };
 
   const handleBuyOutfit = (outfit: Outfit) => {

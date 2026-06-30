@@ -324,3 +324,37 @@ export const resetPassword = createServerFn({ method: "POST" })
       },
     };
   });
+
+// Server Function: Update User Cosmetics
+export const updateUserCosmetics = createServerFn({ method: "POST" })
+  .inputValidator(
+    z.object({
+      email: z.string().email(),
+      purchasedOutfits: z.array(z.string()),
+      equippedOutfit: z.string().nullable(),
+    })
+  )
+  .handler(async ({ data }) => {
+    const email = normalizeEmail(data.email);
+    const users = await loadUsers();
+    const userIndex = users.findIndex((u) => normalizeEmail(u.email) === email);
+
+    if (userIndex === -1) {
+      throw new Error("No existe una cuenta registrada con ese correo.");
+    }
+
+    users[userIndex].purchasedOutfits = data.purchasedOutfits;
+    users[userIndex].equippedOutfit = data.equippedOutfit;
+    await saveUsers(users);
+
+    console.log(`[Auth Server] Cosméticos actualizados para ${email}:`, data.purchasedOutfits, data.equippedOutfit);
+    return {
+      success: true,
+      user: {
+        username: users[userIndex].username,
+        email,
+        purchasedOutfits: data.purchasedOutfits,
+        equippedOutfit: data.equippedOutfit,
+      },
+    };
+  });
