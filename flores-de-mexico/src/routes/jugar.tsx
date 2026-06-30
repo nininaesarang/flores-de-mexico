@@ -583,9 +583,11 @@ function JugarPage() {
         const user = JSON.parse(storedAuthUser);
         if (user && user.email) {
           await updateUserCosmetics({
-            email: user.email,
-            purchasedOutfits: nextPurchasedOutfits,
-            equippedOutfit: nextEquippedOutfit,
+            data: {
+              email: user.email,
+              purchasedOutfits: nextPurchasedOutfits,
+              equippedOutfit: nextEquippedOutfit,
+            }
           });
         }
       }
