@@ -1037,7 +1037,7 @@ function JugarPage() {
     });
   };
 
-  const appLink = "https://floresdemexico.app";
+  const appLink = "https://ninitech.taildfec04.ts.net:8443";
 
   const handleBuyItem = (item: typeof SHOP_ITEMS[0]) => {
     if (coins >= item.cost) {
